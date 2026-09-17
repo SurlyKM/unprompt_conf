@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0c0e11">
+<title>[un]prompted.au 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+--bg:#0c0e11;--surface:#14171c;--surface-hover:#1a1e25;--border:#252a33;
+--text:#d4d8e0;--text-dim:#7a8194;--accent:#5eead4;--accent-dim:#2a6b62;
+--featured:#f0b429;--research:#5eead4;--field-note:#c084fc;
+--tag-bg:rgba(94,234,212,0.1);--bookmark:#f0b429;--radius:6px;
+--mono:'IBM Plex Mono',monospace;--sans:'Inter',system-ui,sans-serif;
+}
+html{font-size:15px;scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+
+/* Header */
+.hdr{position:sticky;top:0;z-index:100;background:rgba(12,14,17,0.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0.5rem 1rem}
+.hdr-in{max-width:860px;margin:0 auto;display:flex;align-items:center;gap:0.7rem;flex-wrap:wrap}
+.logo{font-family:var(--mono);font-weight:600;font-size:1rem;color:var(--accent);white-space:nowrap}.logo span{color:var(--text-dim);font-weight:400}
+.srch{position:relative;flex:1;max-width:300px;min-width:150px}
+.srch input{width:100%;padding:0.35rem 0.6rem 0.35rem 1.8rem;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font:0.83rem var(--sans);outline:0;transition:border-color .2s}
+.srch input:focus{border-color:var(--accent)}.srch input::placeholder{color:var(--text-dim)}
+.srch svg{position:absolute;left:0.5rem;top:50%;transform:translateY(-50%);color:var(--text-dim);pointer-events:none}
+
+/* Countdown strip */
+.cdown{max-width:860px;margin:0 auto;padding:0.5rem 1rem;font-family:var(--mono);font-size:0.78rem;color:var(--text-dim);display:flex;align-items:center;gap:0.6rem;flex-wrap:wrap}
+.cdown .pill{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:0.15rem 0.55rem;display:inline-flex;align-items:center;gap:0.25rem;font-size:0.72rem}
+.cdown .cd-time{color:var(--accent);font-weight:600}
+
+/* Controls */
+.ctrl{max-width:860px;margin:0 auto;padding:0.4rem 1rem 0;display:flex;gap:0.35rem;align-items:center;flex-wrap:wrap}
+.dtab,.fbtn{font:500 0.73rem var(--mono);padding:0.3rem 0.6rem;border-radius:var(--radius);border:1px solid var(--border);background:var(--surface);color:var(--text-dim);cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:0.35rem}
+.dtab:hover,.fbtn:hover{color:var(--text);border-color:var(--text-dim)}
+.dtab.on,.fbtn.on{color:var(--accent);border-color:var(--accent);background:var(--tag-bg)}
+.dtab .ct{font-size:0.6rem;background:var(--border);border-radius:10px;padding:0.02rem 0.3rem}.dtab.on .ct{background:var(--accent-dim);color:var(--accent)}
+.sep{width:1px;height:16px;background:var(--border);margin:0 0.15rem}
+.fbtn.bm{color:var(--bookmark)!important}.fbtn.bm.on{border-color:var(--bookmark);background:rgba(240,180,41,0.1)}
+.fbtn.wtt{color:var(--field-note)!important}.fbtn.wtt.on{border-color:var(--field-note);background:rgba(192,132,252,0.1)}
+
+.main{max-width:860px;margin:0 auto;padding:0 1rem 3rem}
+
+/* Time block */
+.tblk{margin-top:1rem}
+.tlbl{font:500 0.72rem var(--mono);color:var(--text-dim);padding:0.2rem 0;border-bottom:1px solid var(--border);margin-bottom:0.4rem;position:sticky;top:42px;background:var(--bg);z-index:10;display:flex;align-items:center;gap:0.4rem}
+.now-b{font:600 0.6rem var(--mono);color:#ef4444;background:rgba(239,68,68,.12);padding:0.08rem 0.3rem;border-radius:3px;animation:pls 2s infinite}
+.nxt-b{font:600 0.6rem var(--mono);color:var(--accent);background:var(--tag-bg);padding:0.08rem 0.3rem;border-radius:3px}
+@keyframes pls{0%,100%{opacity:1}50%{opacity:.5}}
+
+/* Session */
+.sess{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:0.35rem;overflow:hidden;transition:all .15s;position:relative}
+.sess:not(.brk){cursor:pointer}.sess:not(.brk):hover{border-color:var(--text-dim);background:var(--surface-hover)}
+.sess.exp{border-color:var(--accent-dim)}
+.sess.is-now{border-left:3px solid #ef4444}
+.sess.brk{opacity:.45;cursor:default}.sess.brk:hover{border-color:var(--border);background:var(--surface)}
+.sh{padding:0.6rem 0.8rem;display:flex;gap:0.6rem;align-items:flex-start}
+.sph{width:38px;height:38px;border-radius:50%;object-fit:cover;border:2px solid var(--border);flex-shrink:0}
+.sph.np{display:flex;align-items:center;justify-content:center;background:var(--accent-dim);color:var(--accent);font:600 0.72rem var(--mono)}
+.si{flex:1;min-width:0}
+.st{font-weight:600;font-size:0.9rem;line-height:1.3}
+.sm{display:flex;gap:0.45rem;align-items:center;flex-wrap:wrap;margin-top:0.15rem}
+.sm .sp{font-size:0.78rem;color:var(--text-dim)}
+.stp{font:600 0.6rem var(--mono);padding:0.1rem 0.3rem;border-radius:3px;text-transform:uppercase;letter-spacing:.03em}
+.stp.f{background:rgba(240,180,41,.15);color:var(--featured)}.stp.r{background:rgba(94,234,212,.1);color:var(--research)}.stp.fn{background:rgba(192,132,252,.1);color:var(--field-note)}
+.sd{font:0.67rem var(--mono);color:var(--text-dim)}
+.sr{display:flex;align-items:center;gap:0.3rem;flex-shrink:0;margin-top:0.1rem}
+.chv{color:var(--text-dim);transition:transform .2s}.sess.exp .chv{transform:rotate(180deg);color:var(--accent)}
+.abtn{background:0;border:0;cursor:pointer;padding:0.15rem;color:var(--text-dim);font-size:0.95rem;line-height:1;transition:all .12s}
+.abtn:hover{transform:scale(1.15)}.abtn.on{color:var(--bookmark)}
+.wbtn{font-size:0.85rem}.wbtn.on{color:var(--field-note)}
+
+/* Details panel */
+.det{display:none;padding:0 0.8rem 0.8rem;border-top:1px solid var(--border)}
+.sess.exp .det{display:block}
+
+/* Speaker cards */
+.sc{display:flex;gap:0.6rem;align-items:flex-start;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:0.6rem;margin-top:0.5rem}
+.sc img,.sc .np2{width:46px;height:46px;border-radius:50%;object-fit:cover;border:2px solid var(--border);flex-shrink:0}
+.sc .np2{display:flex;align-items:center;justify-content:center;background:var(--accent-dim);color:var(--accent);font:600 0.75rem var(--mono)}
+.sc h4{font-size:0.85rem;font-weight:600}.sc .org{font-size:0.75rem;color:var(--accent);font-family:var(--mono)}
+.sc .bio{font-size:0.78rem;color:var(--text-dim);margin-top:0.3rem;line-height:1.5}
+.sc .links{margin-top:0.3rem;display:flex;gap:0.5rem;font-size:0.72rem;font-family:var(--mono)}
+.sc .links a{color:var(--accent)}
+.sc .ff{margin-top:0.35rem;font-size:0.78rem;color:var(--text-dim);padding-left:0.5rem;border-left:2px solid var(--accent-dim)}
+.conv-start{margin-top:0.4rem;padding:0.5rem;background:rgba(192,132,252,0.06);border:1px solid rgba(192,132,252,0.15);border-radius:var(--radius)}
+.conv-start-label{font:600 0.68rem var(--mono);color:var(--field-note);margin-bottom:0.2rem}
+.conv-start p{font-size:0.78rem;color:var(--text-dim);margin:0.15rem 0}
+
+.abs{font-size:0.83rem;color:var(--text-dim);line-height:1.6;margin-top:0.6rem}.abs p{margin-bottom:0.4rem}
+
+/* Notes + Rating */
+.nts{margin-top:0.6rem}
+.nts label{font:0.68rem var(--mono);color:var(--text-dim);display:flex;align-items:center;gap:0.25rem;margin-bottom:0.2rem}
+.nts textarea{width:100%;padding:0.4rem;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font:0.8rem var(--sans);resize:vertical;min-height:44px;outline:0;transition:border-color .2s}
+.nts textarea:focus{border-color:var(--accent)}.nts textarea::placeholder{color:var(--text-dim)}
+.rating{margin-top:0.4rem;display:flex;align-items:center;gap:0.3rem}
+.rating label{font:0.68rem var(--mono);color:var(--text-dim)}
+.rating .stars{display:flex;gap:0.15rem}
+.rating .star{background:0;border:0;font-size:1.1rem;cursor:pointer;color:var(--border);transition:color .1s;padding:0}
+.rating .star.lit{color:var(--featured)}
+.rating .takeaway{margin-top:0.3rem}
+.rating .takeaway input{width:100%;padding:0.3rem 0.5rem;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font:0.78rem var(--sans);outline:0}
+.rating .takeaway input:focus{border-color:var(--accent)}.rating .takeaway input::placeholder{color:var(--text-dim)}
+
+.no-r{text-align:center;padding:2.5rem 1rem;color:var(--text-dim);font:0.85rem var(--mono)}
+
+/* Scroll FAB */
+.fab{position:fixed;bottom:1rem;right:1rem;background:var(--accent);color:var(--bg);border:0;border-radius:20px;padding:0.35rem 0.7rem;font:600 0.72rem var(--mono);cursor:pointer;box-shadow:0 2px 12px rgba(94,234,212,.3);display:none;z-index:50;transition:transform .15s}
+.fab:hover{transform:scale(1.05)}
+
+.ftr{text-align:center;padding:1.2rem 1rem;font:0.68rem var(--mono);color:var(--text-dim);border-top:1px solid var(--border);max-width:860px;margin:0 auto}
+
+@media(max-width:600px){
+html{font-size:14px}.hdr-in{gap:.4rem}.srch{max-width:100%;order:3;flex-basis:100%}
+.sh{padding:.5rem .6rem}.sph{width:32px;height:32px}.ctrl{gap:.25rem}
+}
+</style>
+</head>
+<body>
+<header class="hdr"><div class="hdr-in">
+<div class="logo">[un]<span>prompted.au</span></div>
+<div class="srch"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><input type="text" placeholder="Search speakers, topics..." id="q"></div>
+</div></header>
+
+<div class="cdown" id="cdown"></div>
+<div class="ctrl" id="ctrl"></div>
+<main class="main" id="main"></main>
+<button class="fab" id="fab">↓ Now</button>
+<footer class="ftr">Data from <a href="https://www.unprompted.au/schedule" target="_blank">unprompted.au</a> · Bookmarks, notes and ratings saved locally on this device.</footer>
+
+<script>
+// ==================== DATA ====================
+const D={days:[
+// ---- DAY 1 ----
+{id:"d1",label:"Day 1",date:"Fri 18 Sept",iso:"2026-09-18",sessions:[
+{t:"08:30",e:"09:00",title:"Registration",type:"break",spk:[]},
+{t:"09:00",e:"09:10",title:"Conference Opening",type:"break",spk:[]},
+{t:"09:15",e:"10:00",title:"Operating Modern Models Safely",type:"featured",dur:"45m",spk:[{n:"Paul McMillan",o:"OpenAI",ph:null,in:"PM",
+bio:"Security Engineer at OpenAI. Co-authored the GPT-4 technical report and GPT-4o system card. Also spoke at the US [un]prompted in March 2026 on the same topic with colleague Ryan Lopopolo.",
+links:{x:"",li:""},
+ff:"Co-authored GPT-4 and GPT-4o system cards. His US unprompted talk pitched an 'AI-maximalist vision' for security: 'Your engineers are using LLMs to write your code, why aren't they using them for security?'",
+conv:["What's the practical token overhead for safety in production? Is it a fixed % or does it vary by use case?","How did the audience react at the US unprompted version of this talk? Did anything change for the AU version?","What's the most underrated zero-friction security addition teams should start with?"]}],
+abs:"You must budget tokens for model safety. The major model providers do it, so should you. This talk will discuss a variety of approaches, including their downsides, and give you the tools to incrementally improve your own environment."},
+{t:"10:00",e:"10:30",title:"What's the deal with Hallucinations anyway?",type:"research",dur:"30m",spk:[{n:"Ariel Herbert-Voss",o:"RunSybil",ph:"https://www.unprompted.au/assets/speakers/ariel-herbert-voss.jpg",
+bio:"Previously research scientist at OpenAI. Co-founded RunSybil to tackle AI reliability. Research focuses on latent space collisions and prompt optimisation.",
+links:{},
+ff:"Former OpenAI research scientist. At RunSybil she's working on the reliability problem from the inside out, not just detecting hallucinations but understanding why the latent space produces them.",
+conv:["What's the most surprising latent space collision you've found in practice?","How does prompt optimisation compare to fine-tuning for avoiding hallucination failure regions?","Any thoughts on whether hallucination is a solvable problem or a fundamental limitation?"]}],
+abs:"When an AI-generated result looks convincing at first glance but falls apart under closer inspection, it can signal a collision in the model's latent space. This talk explores what those failures can tell us about model behaviour, and how to address them through fine-tuning, post-training, or prompt optimisation."},
+{t:"10:30",e:"11:00",title:"Coffee Break",type:"break",spk:[]},
+{t:"11:00",e:"11:30",title:"3.6 MEGAJOULES OF DANGEROUSLY SKIP PERMISSIONS: CAN Reverse Engineering in the Real World",type:"research",dur:"30m",spk:[{n:"Tristan Steele",o:"",ph:"https://www.unprompted.au/assets/speakers/tristan-steele.jpg",
+bio:"Hardware security researcher with a focus on embedded systems. Letting LLM agents interact with real-world hardware, not just virtual environments.",
+links:{},
+ff:"Title is a Chernobyl reference. He literally let an LLM agent loose on a live CAN bus using a portable power station as the target, with physical isolation and permission gates.",
+conv:["What was the scariest moment during the live CAN bus experiments?","How did you design the permission gates so the agent couldn't brick the hardware?","What's your take on agents in real-world embedded systems beyond research?"]}],
+abs:"Letting an LLM agent loose on a live CAN bus, using a consumer portable power station as the target. The harness, permission gates, instrumentation and physical isolation it took before an agent could safely touch real hardware."},
+{t:"11:30",e:"12:00",title:"To the Frontier and Back Again",type:"research",dur:"30m",spk:[{n:"John McIntosh",o:"Clearseclabs",ph:"https://www.unprompted.au/assets/speakers/john-mcintosh.jpg",
+bio:"Vulnerability researcher at Clearseclabs. Discovered two Windows system-service 0-days using AI, then replayed the hunt on open-weight local models.",
+links:{},
+ff:"Found the first legitimate 0-day with a frontier model in 1 hour, 16 minutes, 5 seconds. The model initially refused the PoC, and needed direction, correction, and encouragement.",
+conv:["How much of the 1h16m was model work vs human direction?","The model refused the PoC initially. How did you get past that?","How close did Qwen/Gemma/GLM get when you replayed the hunt locally?"]}],
+abs:"Two Windows bugs found with a frontier model, the first in just over an hour, and the human direction it took to get there. Then the same hunt replayed on open-weight local models to measure how much frontier capability survives."},
+{t:"12:00",e:"12:30",title:"Confusing CNNs on NPUs with LLMs using FI",type:"research",dur:"30m",spk:[{n:"Jasper van Woudenberg",o:"Keysight Device Security Testing",ph:"https://www.unprompted.au/assets/speakers/jasper-van-woudenberg.jpg",
+bio:"Hardware security expert at Keysight. Specialises in fault injection, side-channel analysis, and now applying LLM agents to hardware attack automation.",
+links:{},
+ff:"Let LLM agents run overnight to voltage-glitch a commercial NPU (Rockchip RK3568 + YOLOv5). Made an edge-AI camera see phantom objects, or nothing at all.",
+conv:["How did you design the feedback loop so the LLM agent could meaningfully adapt glitch parameters?","Any edge-AI NPUs that are more resistant to this class of attack?","What's the scariest real-world implication: autonomous vehicles, drones, something else?"]}],
+abs:"Voltage-glitching a commercial NPU to make an edge-AI camera see phantoms, or nothing at all, with LLM agents left to search the fault space overnight. Why neural accelerators are an emerging hardware attack surface."},
+{t:"12:30",e:"13:30",title:"Lunch",type:"break",spk:[]},
+{t:"13:30",e:"14:15",title:"BinChomp \u2014 Autonomous N-Day Exploit Generation Pipeline",type:"featured",dur:"45m",spk:[{n:"Valentina Palmiotti",o:"IBM X-Force",ph:"https://www.unprompted.au/assets/speakers/valentina-palmiotti.jpg",
+bio:"Vulnerability researcher at IBM X-Force, specialising in Windows kernel exploitation. Known for deep technical work on n-day exploit automation.",
+links:{x:"@chompie1337"},
+ff:"Her handle is @chompie1337. Windows kernel exploitation specialist. BinChomp is an autonomous pipeline that takes patches and produces working n-day exploits.",
+conv:["How does BinChomp handle the gap between patch diff analysis and producing a reliable exploit primitive?","What's the false-positive rate like when it tries to auto-generate exploits?","Any plans to extend BinChomp beyond Windows kernel targets?"]}],
+abs:"A technical look into BinChomp, an autonomous N-Day pipeline focused on the Windows Kernel."},
+{t:"14:15",e:"14:45",title:"Agents That Watch: Event-Driven Detection and Response at Slack",type:"research",dur:"30m",spk:[{n:"Dominic Marks",o:"Slack",ph:"https://www.unprompted.au/assets/speakers/dominic-marks.jpg",
+bio:"Security operations at Slack. Built an event-driven agentic detection system that's been running in production since April 2026.",
+links:{},
+ff:"Their agentic system caught a no-notice red team exercise end to end before a human analyst was even notified. Design principle: 'Don't model the attack, model the environment, and give it a memory.'",
+conv:["How do you handle false positives when the observer agents are learning what 'normal' looks like?","'Model the environment, not the attack' is a great principle. How does it handle novel attack patterns?","What does the human analyst's workflow look like once the system surfaces a correlated finding?"]}],
+abs:"Inside the event-driven agentic detection system Slack's SecOps team has run in production since April 2026, told through a no-notice red team exercise it caught and mapped end to end."},
+{t:"14:45",e:"15:15",title:"How Agentic SAST Decodes Business Context to Hunt Privilege Escalation",type:"research",dur:"30m",spk:[{n:"Sylvia Xu",o:"TikTok",ph:"https://www.unprompted.au/assets/speakers/sylvia-xu.jpg",bio:"AppSec researcher at TikTok. Built AuthMatrix for automated RBAC privilege escalation detection.",links:{},ff:"AuthMatrix achieved 89-94% precision at enterprise scale, something traditional SAST can't touch for business logic bugs.",conv:["How does AuthMatrix handle feature flags that change role boundaries dynamically?","What's the hardest part of extracting business context from source code at TikTok's scale?"]},
+{n:"Songjiu Liu",o:"TikTok",ph:"https://www.unprompted.au/assets/speakers/songjiu-liu.png",bio:"Co-developer of the Semantic-Grounding SAST approach at TikTok.",links:{},ff:"Co-developed the approach of having LLM subagents do semantic reasoning over a dynamically constructed knowledge base of roles and permissions.",conv:[]}],
+abs:"Traditional SAST is blind to RBAC Privilege Escalation. AuthMatrix extracts business context directly from source code to construct a dynamic Knowledge Base, achieving 89-94% precision."},
+{t:"15:15",e:"15:45",title:"Coffee Break",type:"break",spk:[]},
+{t:"15:45",e:"16:15",title:"Harness & Hunt: Hybrid Agent Architecture for Autonomous Vulnerability Research",type:"research",dur:"30m",spk:[{n:"Anthony Lai",o:"VXRL",ph:"https://www.unprompted.au/assets/speakers/anthony-lai.png",bio:"Security researcher at VXRL. Led a three-month study of 630 agent-generated vulnerability findings.",links:{},ff:"Found that the more expensive frontier model actually performed worse on static analysis: 285 findings with 99 false positives vs 169 findings and 39 FPs from the cheaper model.",conv:["Why did the frontier model do worse? Is it over-confident on static analysis tasks?","How did you design your verification pipeline to avoid the LLM judge drifting toward 'uncertain'?"]},
+{n:"Alan Ho",o:"VXRL",ph:"https://www.unprompted.au/assets/speakers/alan-ho.png",bio:"VXRL researcher. Research covered stripped ELFs, live web apps, Android APKs, and Solidity contracts.",links:{},ff:"An agent in their tests decompiled a stripped binary, identified an overflow, and produced a working exploit against a live service.",conv:[]},
+{n:"Ken Wong",o:"HKUST",ph:"https://www.unprompted.au/assets/speakers/ken-wong.jpg",bio:"Academic researcher at HKUST working on AI-assisted vulnerability research.",links:{},ff:"Academic perspective on measuring real-world agent capability beyond benchmarks.",conv:[]}],
+abs:"A three-month study adjudicating 630 agent-generated findings against actual code. Precision depended more on method than model."},
+{t:"16:15",e:"16:45",title:"Let\u2019s Get Physical: Blind Prompt Injection From Meatspace",type:"research",dur:"30m",spk:[{n:"Rich Smith",o:"Mindgard",ph:"https://www.unprompted.au/assets/speakers/rich-smith.png",
+bio:"CTO of Mindgard, an AI security company. Long history in offensive security research.",
+links:{},
+ff:"Releasing an open source prompt injection field kit for Pineapple Pagers, Flipper Zeros, and more. Bring your devices to the talk.",
+conv:["Which physical channel (NFC, Wi-Fi probe, barcode) has been the most surprisingly effective for blind injection?","How far down the SIEM pipeline does a planted injection typically travel before it fires?","Will the field kit be on GitHub straight after the talk?"]}],
+abs:"Prompt injection from the real world: swiped badges, scanned barcodes, NFC taps, Wi-Fi probes. Demo and release of an open source prompt injection field kit."},
+{t:"16:45",e:"17:00",title:"AI With Receipts: Evidence-Backed AI for High-Stakes Work",type:"field-note",dur:"15m",spk:[{n:"Pete Werner",o:"Penumbra AI",ph:"https://www.unprompted.au/assets/speakers/pete-werner.png",bio:"Founder of Penumbra AI. Building AI workflows with traceable evidence chains.",links:{},ff:"Core insight: AI saves time completing tasks, but verification often takes just as long as doing it yourself. He's building the receipts layer.",conv:["How do you structure the evidence chain so a reviewer can audit the AI's reasoning without re-doing the work?","Any patterns for when it's cheaper to just do it manually vs build the traceability pipeline?"]}],
+abs:"AI can dramatically reduce the time to complete a task, but verifying the result often takes just as long. How to build workflows where conclusions are grounded in traceable source material."},
+{t:"17:00",e:"17:15",title:"Capture the Narrative \u2014 Social Media Manipulation Wargaming",type:"field-note",dur:"15m",spk:[{n:"Rahat Masood",o:"UNSW Sydney",ph:"https://www.unprompted.au/assets/speakers/rahat-masood.jpg",bio:"Researcher at UNSW Sydney focused on LLM-powered social media manipulation and disinformation.",links:{},ff:"288 students, 70+ teams, thousands of bots, millions of artificial posts. They moved a simulated electorate by 1.8 percentage points.",conv:["What was the most effective manipulation strategy the students discovered?","Has the dataset been released? Would be great for detection engineering work.","Any plans to run another round with newer models?"]}],
+abs:"A CTF-style massively multiplayer wargame where 288 university students ran LLM-powered bot campaigns to swing a simulated election."},
+{t:"17:15",e:"19:00",title:"Day 1 Networking Session",type:"break",spk:[]},
+{t:"19:00",e:"late",title:"Conference Party",type:"break",spk:[]}
+]},
+// ---- DAY 2 ----
+{id:"d2",label:"Day 2",date:"Sat 19 Sept",iso:"2026-09-19",sessions:[
+{t:"09:15",e:"10:00",title:"Building the Ultimate AI Cyber Threat Analyst",type:"featured",dur:"45m",spk:[{n:"Shane Huntley",o:"Google Threat Intelligence Group",ph:null,in:"SH",
+bio:"Senior Director of Google's Threat Analysis Group (TAG). Previously at the Australian Signals Directorate. TAG tracks 270+ government-backed threat groups across 50+ countries.",
+links:{x:"@ShaneHuntley",li:"shanehuntley"},
+ff:"Australian. Previously ASD. Leads Google TAG which tracks 270+ government-backed groups. Recently spoke on the Security Conversations podcast about zero-days, North Korean APTs, and mercenary hackers.",
+conv:["You've gone from ASD to Google TAG. What's the biggest difference in how nation-state threats look from each vantage point?","What's actually working in practice with the AI threat analyst agents? Where do they still need human intuition?","How do you evaluate whether an AI agent has developed enough 'intuition' to trust its assessments?"]}],
+abs:"How Google is building AI to operate in the complex threat intelligence environment. Training agents to work alongside human analysts, what's working in practice, and what it means for the future of threat intelligence."},
+{t:"10:00",e:"10:30",title:"ExploitBench",type:"research",dur:"30m",spk:[{n:"Seunghyun Lee",o:"Carnegie Mellon University",ph:null,in:"SL",
+bio:"Researcher at CMU working on benchmarking LLM exploit capabilities against real browser engine vulnerabilities.",
+links:{},
+ff:"ExploitBench doesn't just ask 'can it exploit?' but grades across 16 capability flags, showing exactly where on the exploitation ladder each model stops.",
+conv:["Which of the 16 capability flags is the hardest for current models? Where's the cliff?","Why V8 specifically? Is it because the bug classes are well-understood, or something else?","Any models that surprised you by getting further than expected?"]}],
+abs:"Exploitation is a ladder, not a coin flip. ExploitBench grades LLM agents across 16 capability flags against real V8, from first crash to arbitrary code execution."},
+{t:"10:30",e:"11:00",title:"Coffee Break",type:"break",spk:[]},
+{t:"11:00",e:"11:30",title:"The Fuzzer Reached the Code, yet Missed the State: LLM-Guided JS Engine Fuzzing",type:"research",dur:"30m",spk:[
+{n:"Wai Kin Wong",o:"HKUST",ph:null,in:"WW",bio:"PhD researcher at HKUST. Lead developer of StateLens.",links:{},ff:"StateLens found 68 previously unknown bugs across six production JS engines, with 35+ confirmed security implications. Bugs rewarded by Google, Meta, and Apple.",conv:["How does StateLens decide which internal states are 'security-relevant'? Is that the LLM's hardest job in the pipeline?","What's the false positive rate compared to traditional coverage-guided fuzzers?"]},
+{n:"Dongwei Xiao",o:"HKUST",ph:null,in:"DX",bio:"HKUST researcher, StateLens co-developer.",links:{},ff:"Bugs from their work were acknowledged by Google, Meta, and Apple.",conv:[]},
+{n:"Shuai Wang",o:"HKUST",ph:null,in:"SW",bio:"Faculty at HKUST. Research bridges LLM reasoning and conventional high-throughput fuzzing.",links:{},ff:"Key insight: use the LLM offline for the hard reasoning, let the fuzzer do what fuzzers are good at, running fast.",conv:[]}],
+abs:"Fuzzers reach the vulnerable code and still miss the bug because coverage tracks lines, not state. StateLens uses LLMs offline to identify security-relevant states, then lets a conventional fuzzer search at high throughput. 68 new bugs across six production JS engines."},
+{t:"11:30",e:"12:00",title:"Human in the Loop, Ghost in the Shell: Building AI-Powered Adversaries",type:"research",dur:"30m",spk:[{n:"Ash Fox",o:"Google",ph:null,in:"AF",
+bio:"Google Red Team. Designs and deploys offensive AI tools from copilot-style assistants to near-autonomous red team campaigns.",
+links:{},
+ff:"Google Red Team perspective on how real-world attackers will leverage AI, from industrialised social engineering to machine-speed exploitation. They're building the same tools internally.",
+conv:["What's the gap between your near-autonomous red team campaigns and what you think real adversaries can do today?","Which attack category benefited most from AI augmentation: social engineering, tooling, or exploitation?","How does Google's red team evaluate whether an AI-powered campaign was 'realistic' enough?"]}],
+abs:"How real-world attackers will leverage AI: from industrialised social engineering to machine-speed exploitation. Experiences designing and deploying offensive AI tools at Google."},
+{t:"12:00",e:"12:30",title:"Are we missing the boat? Sovereign AI capability",type:"research",dur:"30m",spk:[
+{n:"Ben Gittins",o:"Zepto / Australi.ai",ph:null,in:"BG",bio:"Co-founder of Australi.ai. Background in fintech (Zepto). Argues for domestic AI capability in Australian cyber.",links:{},ff:"Co-founder of Australi.ai. Believes the Australian cyber profession is entering a K-shaped split: those who harness AI tooling vs everyone else.",conv:["What does 'sovereign AI capability' look like practically for a mid-size Australian org?","How do you see the Essential Eight evolving when agentic AI changes the threat model?"]},
+{n:"Cole Cornford",o:"Galah Cyber / Australi.ai",ph:null,in:"CC",bio:"Founder of Galah Cyber and co-founder of Australi.ai. AppSec background. Vocal advocate for Australian cyber sovereignty.",links:{x:"@colecornford"},ff:"Galah Cyber founder. Argues open models have crossed the reliability threshold for long-horizon agentic tasks, lowering the barrier for everyone, including attackers.",conv:["You're saying a competent operator with agent swarms is a different category from a skilled pen tester. What does that mean for hiring?","What's the most practical first step for an Australian org that wants to build domestic AI capability?"]}],
+abs:"Agentic AI is commoditising artisanal cyber skills. The Australi.ai co-founders on why Australia should build capability domestically rather than rent it from foreign vendors."},
+{t:"12:30",e:"13:30",title:"Lunch",type:"break",spk:[]},
+{t:"13:30",e:"14:15",title:"AI-Assisted Exploit Development: An XNU Case Study",type:"featured",dur:"45m",spk:[{n:"Dion Blazakis",o:"Calif Research",ph:null,in:"DB",
+bio:"Renowned iOS/macOS exploit developer. Co-author of the iOS Hacker's Handbook. Previously at Azimuth Security. Now at Calif, where his team built the first public macOS kernel exploit on Apple M5 with MIE in five days using AI assistance.",
+links:{li:"dblazakis"},
+ff:"His team at Calif broke Apple's M5 Memory Integrity Enforcement in 5 days (bugs found April 25, Dion joined April 27, working exploit by May 1). Co-author of the iOS Hacker's Handbook with Charlie Miller. This talk is the must-see of Day 2.",
+conv:["The Calif/M5 timeline was wild. How much of that speed was the model vs having elite humans who knew exactly what to ask?","Where did the AI agents genuinely help in the XNU exploit chain, and where did they waste your time?","What does the M5 MIE result mean for the economics of exploit development going forward?"]}],
+abs:"Working with AI agents to turn two macOS vulnerabilities into controlled kernel read/write and root. Where the models helped, where they didn't, and what it means for modern mitigations."},
+{t:"14:15",e:"14:45",title:"AI Threat Intelligence: Hunting Threats Across the AI Ecosystem",type:"research",dur:"30m",spk:[{n:"Thomas Roccia",o:"SecurityBreak",ph:null,in:"TR",
+bio:"Independent threat intelligence researcher, previously at Microsoft. Runs SecurityBreak. Known for visual threat intel and malware analysis work.",
+links:{x:"@fr0gger_"},
+ff:"Previously Microsoft threat intel. Now focused on the new attack surface: AI agents, MCP servers, prompts, AI supply chains. The targets aren't just the models, they're the entire ecosystem around them.",
+conv:["What's the most underappreciated attack vector in the AI ecosystem right now? MCP servers?","How should defenders think about AI supply chain risk differently from traditional software supply chain?","Any good examples of threat actors already targeting AI infrastructure in the wild?"]}],
+abs:"AI agents, models, MCP servers, skills, prompts, tools, identities and AI supply chains have become new attack targets. How to operationalise AI Threat Intelligence."},
+{t:"14:45",e:"15:15",title:"From Diff to Primitive: An LLM Auditor that Found 8 WebKit CVEs",type:"research",dur:"30m",spk:[{n:"Saurabh Kumar",o:"Microsoft Edge",ph:null,in:"SK",
+bio:"Security researcher at Microsoft Edge. Built Zenshin, an LLM-powered WebKit auditor with a rigorous verification pipeline.",
+links:{},
+ff:"Zenshin found 8 Safari CVEs (2 more pending). The pipeline uses call-graph reachability, cross-model debate, and ASAN as final judge. Only hands over reproduced bugs, not plausible ones.",
+conv:["Cross-model debate is a fascinating verification step. How do you structure it so models don't just agree with each other?","What's the candidate-to-crash-to-primitive funnel look like numerically?","Is the 'turning a crash into impact' still the hardest part, or is the pipeline catching up?"]}],
+abs:"Zenshin: an LLM auditor that only hands over reproduced WebKit bugs. Call-graph reachability, cross-model debate, ASAN as final judge. Eight CVEs so far."},
+{t:"15:15",e:"15:30",title:"Coffee Break",type:"break",spk:[]},
+{t:"15:30",e:"16:00",title:"Before the CVE: Mining Commits for Negative Day Vulnerabilities",type:"research",dur:"30m",spk:[{n:"Dmitrijs Trizna",o:"AISLE",ph:null,in:"DT",
+bio:"Security researcher at AISLE. Building AI pipelines to identify security fixes before CVEs are published.",
+links:{},
+ff:"The 'Negative Day' window: between when a fix is public and when a CVE is issued. His pipeline scans post-tag commits to find exploitable security fixes before advisories catch up. Tested on 39 real windows from Django, React, cryptography, etc.",
+conv:["How do you stop a malicious commit from prompt-injecting the detector that's reviewing it?","What's the typical negative-day window you're seeing for major open source projects?","How do you separate a plausible generated PoC from one that actually works?"]}],
+abs:"The interval between a public fix and public disclosure is the Negative Day. An AI pipeline that identifies exploitable security fixes before advisories catch up."},
+{t:"16:00",e:"16:30",title:"Your Electron App is Already Exploitable",type:"research",dur:"30m",spk:[{n:"Danila Sashchenko",o:"TikTok",ph:null,in:"DS",
+bio:"Security engineer at TikTok. Built an AI-driven ElectronJS vulnerability discovery system integrated into CI/CD.",
+links:{},
+ff:"Integrated into CI/CD to scan every merge request. Auto-generates Semgrep rules from validated findings and feeds into an ELK feedback loop. Practical DevSecOps at scale.",
+conv:["How long does the source-sink analysis + harness generation take per MR in practice?","What's the false positive rate after the feedback loop has been running for a while?","Any interesting patterns in ElectronJS vulns that keep recurring?"]}],
+abs:"AI-driven ElectronJS vulnerability discovery with real-time harness generation. Integrated into CI/CD, scanning every merge request."},
+{t:"16:30",e:"16:45",title:"Build the Tooling, Don't Be the Tooling",type:"field-note",dur:"15m",spk:[{n:"Casey Ellis",o:"Tall Poppy Group / disclose.io",ph:null,in:"CE",
+bio:"Founder of Bugcrowd (pioneered crowdsourced security). Co-founder of disclose.io. Sydney native, now SF-based. Review board member at Black Hat USA, DEF CON Policy, and [un]prompted. Regular on the Risky Business podcast.",
+links:{x:"@caborneellis",li:"caseyjohnellis",web:"cje.io"},
+ff:"Sydney native. Founded Bugcrowd in 2012, co-founded disclose.io. His 'slopdemic' concept (AI-generated low-quality vuln reports burying maintainers) is becoming industry shorthand. This talk is about a tool that rewrites its own resolution logic and gets more accurate the more it fails.",
+conv:["The slopdemic concept really resonated. Are you seeing it get worse or are platforms adapting?","How does the self-improving tool stay trustworthy when it's rewriting its own logic? What's the gate?","You coined 'tool, target, threat' for AI security taxonomy. How's that framework holding up a year on?"]}],
+abs:"Use AI to build systems that do the work deterministically. A self-improving vulnerability disclosure lookup tool that gets more accurate the more it fails. Antifragility as engineering."},
+{t:"16:45",e:"17:00",title:"Security Through Obscurity Is Dead and LLMs Killed It",type:"field-note",dur:"15m",spk:[{n:"Brendan Dolan-Gavitt",o:"XBOW",ph:null,in:"BD",
+bio:"Associate Professor at NYU. Co-founder of XBOW. Previously known for memory forensics research (Volatility). Also spoke at the US unprompted in March 2026.",
+links:{x:"@moyaboroda"},
+ff:"NYU professor and XBOW co-founder. Built an unphotocopiable cat by reverse-engineering currency detection in copiers. Auto-built a QEMU emulator for an HP printer so faithful it runs out of emulated toner. His conclusion: obscurity now buys days, not years.",
+conv:["The unphotocopiable cat is the best demo title at this conference. How did the currency detection actually work under the hood?","'Days, not years' for obscurity. What does that mean for IoT/embedded vendors who rely on it?","How faithful is the QEMU printer emulator? Does it actually simulate paper jams?"]}],
+abs:"Reverse-engineering currency detectors to build an unphotocopiable cat. Auto-building a QEMU emulator for a laser printer. Obscurity now buys days, not years."},
+{t:"17:00",e:"17:10",title:"Closing Remarks",type:"break",spk:[{n:"Mark Dowd",o:"Vigilant Labs",ph:null,in:"MD",bio:"Co-founder of Vigilant Labs and [un]prompted.au. Previously co-founded Azimuth Security (now L3Harris Trenchant). Author of 'The Art of Software Security Assessment'.",links:{},ff:"One of the most respected vulnerability researchers in the world. His book TAOSSA is the bible of code auditing.",conv:["Any hints on what's coming for [un]prompted.au 2027?"]}]},
+{t:"17:10",e:"19:00",title:"Day 2 Networking Session",type:"break",spk:[]}
+]}
+]};
+
+// ---- STATE ----
+let aDay='d1',aFilt='all',qry='',showBM=false,showWT=false;
+const S=k=>JSON.parse(localStorage.getItem('up26-'+k)||'{}');
+const W=(k,v)=>localStorage.setItem('up26-'+k,JSON.stringify(v));
+let bm=S('bm'),notes=S('n'),ratings=S('r'),takes=S('tk'),wtt=S('wtt');
+const sk=(d,i)=>d+'-'+i;
+
+// ---- INIT ----
+(function(){
+const today=new Date().toISOString().split('T')[0];
+const td=D.days.find(d=>d.iso===today);if(td)aDay=td.id;
+render();
+document.getElementById('q').addEventListener('input',e=>{qry=e.target.value.toLowerCase().trim();renderMain()});
+setInterval(updateCountdown,30000);updateCountdown();
+setTimeout(scrollNow,400);
+})();
+
+function talkCount(d){return d.sessions.filter(s=>s.type!=='break').length}
+
+function render(){renderCtrl();renderMain();updateFab()}
+
+function renderCtrl(){
+const c=document.getElementById('ctrl');
+const bmC=Object.values(bm).filter(Boolean).length;
+const wtC=Object.values(wtt).filter(Boolean).length;
+c.innerHTML=D.days.map(d=>`<button class="dtab ${d.id===aDay?'on':''}" data-d="${d.id}">${d.label} <span class="ct">${talkCount(d)}</span></button>`).join('')+
+'<div class="sep"></div>'+
+['all','featured','research','field-note'].map(t=>`<button class="fbtn ${t===aFilt&&!showBM&&!showWT?'on':''}" data-t="${t}">${{all:'All',featured:'Featured',research:'Research','field-note':'Field Note'}[t]}</button>`).join('')+
+`<button class="fbtn bm ${showBM?'on':''}" data-t="bm">★ ${bmC||''}</button>`+
+`<button class="fbtn wtt ${showWT?'on':''}" data-t="wtt">\u{1F4AC} ${wtC||''}</button>`;
+c.querySelectorAll('.dtab').forEach(b=>b.onclick=()=>{aDay=b.dataset.d;render()});
+c.querySelectorAll('.fbtn').forEach(b=>b.onclick=()=>{
+if(b.dataset.t==='bm'){showBM=!showBM;showWT=false;aFilt='all'}
+else if(b.dataset.t==='wtt'){showWT=!showWT;showBM=false;aFilt='all'}
+else{aFilt=b.dataset.t;showBM=false;showWT=false}
+render()});
+}
+
+function updateCountdown(){
+const el=document.getElementById('cdown');
+const day=D.days.find(d=>d.id===aDay);if(!day)return;
+const now=new Date(),iso=day.iso,isToday=now.toISOString().split('T')[0]===iso;
+const nM=now.getHours()*60+now.getMinutes();
+// Find next bookmarked session
+let nextBM=null;
+if(isToday){
+for(const s of day.sessions){
+const k=sk(day.id,day.sessions.indexOf(s));
+if(!bm[k]||s.type==='break')continue;
+const sM=parseInt(s.t.split(':')[0])*60+parseInt(s.t.split(':')[1]);
+if(sM>nM){nextBM=s;break}
+}}
+const pills=[`<span class="pill">\u{1F4CD} ILUMINA, Sydney</span>`,`<span class="pill">\u{1F4C5} ${day.date}</span>`];
+if(nextBM){
+const sM=parseInt(nextBM.t.split(':')[0])*60+parseInt(nextBM.t.split(':')[1]);
+const diff=sM-nM;
+pills.push(`<span class="pill">Next bookmarked: <span class="cd-time">${nextBM.title.substring(0,30)}${nextBM.title.length>30?'...':''} in ${diff}m</span></span>`);
+}
+el.innerHTML=pills.join('');
+}
+
+function match(s){if(!qry)return true;const h=[s.title,s.abs||'',...s.spk.map(p=>p.n+' '+p.o+' '+(p.ff||'')+' '+(p.bio||''))].join(' ').toLowerCase();return qry.split(/\s+/).every(t=>h.includes(t))}
+
+function renderMain(){
+const day=D.days.find(d=>d.id===aDay);if(!day){document.getElementById('main').innerHTML='<div class="no-r">Day not found.</div>';return}
+let ss=day.sessions.map((s,i)=>({...s,_i:i}));
+if(aFilt!=='all')ss=ss.filter(s=>s.type===aFilt);
+if(showBM)ss=ss.filter(s=>bm[sk(day.id,s._i)]);
+if(showWT)ss=ss.filter(s=>wtt[sk(day.id,s._i)]);
+ss=ss.filter(match);
+if(!ss.length){document.getElementById('main').innerHTML='<div class="no-r">No sessions match.</div>';updateFab();return}
+
+const now=new Date(),isToday=day.iso===now.toISOString().split('T')[0],nM=now.getHours()*60+now.getMinutes();
+let fNow=false,fNxt=false;
+const gs=[];let lt=null;
+ss.forEach(s=>{if(s.t!==lt){gs.push({t:s.t,e:s.e,ss:[s]});lt=s.t}else gs[gs.length-1].ss.push(s)});
+
+document.getElementById('main').innerHTML=gs.map(g=>{
+const bM=parseInt(g.t.split(':')[0])*60+parseInt(g.t.split(':')[1]);
+const eM=g.e&&g.e!=='late'?parseInt(g.e.split(':')[0])*60+parseInt(g.e.split(':')[1]):bM+60;
+let bdg='';const isN=isToday&&nM>=bM&&nM<eM;
+if(isToday&&!fNow&&isN){bdg='<span class="now-b">NOW</span>';fNow=true}
+else if(isToday&&!fNow&&!fNxt&&nM<bM){bdg='<span class="nxt-b">UP NEXT</span>';fNxt=true}
+return `<div class="tblk" ${isN?'id="now-blk"':''}><div class="tlbl">${g.t}\u2013${g.e||''} ${bdg}</div>${g.ss.map(s=>rSess(s,day.id,isN)).join('')}</div>`;
+}).join('');
+
+document.querySelectorAll('.sess:not(.brk)').forEach(el=>el.addEventListener('click',e=>{if(e.target.closest('.abtn,.wbtn,.nts,.rating'))return;el.classList.toggle('exp')}));
+document.querySelectorAll('.abtn').forEach(b=>b.onclick=e=>{e.stopPropagation();const k=b.dataset.k;bm[k]=!bm[k];W('bm',bm);render()});
+document.querySelectorAll('.wbtn').forEach(b=>b.onclick=e=>{e.stopPropagation();const k=b.dataset.k;wtt[k]=!wtt[k];W('wtt',wtt);render()});
+document.querySelectorAll('.nta').forEach(t=>{t.onclick=e=>e.stopPropagation();t.oninput=()=>{notes[t.dataset.k]=t.value;W('n',notes)}});
+document.querySelectorAll('.star').forEach(b=>{b.onclick=e=>{e.stopPropagation();ratings[b.dataset.k]=+b.dataset.v;W('r',ratings);renderMain()}});
+document.querySelectorAll('.tki').forEach(t=>{t.onclick=e=>e.stopPropagation();t.oninput=()=>{takes[t.dataset.k]=t.value;W('tk',takes)}});
+updateFab();
+}
+
+function rSess(s,dId,isN){
+const isBrk=s.type==='break'&&!(s.spk&&s.spk.length&&s.spk[0].bio);
+const k=sk(dId,s._i);
+const tl={featured:'Featured',research:'Research','field-note':'Field Note'};
+const tc={featured:'f',research:'r','field-note':'fn'};
+const spN=s.spk.map(p=>p.o?`${p.n} \u00b7 ${p.o}`:p.n).join(', ');
+const ph=s.spk.length>0&&s.spk[0].ph?`<img class="sph" src="${s.spk[0].ph}" alt="${s.spk[0].n}" loading="lazy">`:s.spk.length>0?`<div class="sph np">${s.spk[0].in||s.spk[0].n.split(' ').map(w=>w[0]).join('')}</div>`:'';
+
+const cards=s.spk.map(p=>{
+const lnks=[];
+if(p.links){if(p.links.x)lnks.push(`<a href="https://x.com/${p.links.x.replace('@','')}" target="_blank">X: ${p.links.x}</a>`);if(p.links.li)lnks.push(`<a href="https://linkedin.com/in/${p.links.li}" target="_blank">LinkedIn</a>`);if(p.links.web)lnks.push(`<a href="https://${p.links.web}" target="_blank">${p.links.web}</a>`)}
+const convHtml=p.conv&&p.conv.length?`<div class="conv-start"><div class="conv-start-label">\u{1F4AC} Conversation starters</div>${p.conv.map(c=>`<p>\u2022 ${c}</p>`).join('')}</div>`:'';
+return `<div class="sc">${p.ph?`<img src="${p.ph}" alt="${p.n}" loading="lazy">`:`<div class="np2">${p.in||p.n.split(' ').map(w=>w[0]).join('')}</div>`}<div><h4>${p.n}</h4>${p.o?`<div class="org">${p.o}</div>`:''}${p.bio?`<div class="bio">${p.bio}</div>`:''}${lnks.length?`<div class="links">${lnks.join(' ')}</div>`:''}${p.ff?`<div class="ff">${p.ff}</div>`:''}${convHtml}</div></div>`;
+}).join('');
+
+const absH=s.abs?s.abs.split('\n').filter(p=>p.trim()).map(p=>`<p>${p}</p>`).join(''):'';
+const r=ratings[k]||0;
+const starsH=Array.from({length:5},(_, i)=>`<button class="star ${i<r?'lit':''}" data-k="${k}" data-v="${i+1}">\u2605</button>`).join('');
+
+return `<div class="sess ${isBrk?'brk':''} ${isN&&!isBrk?'is-now':''}" data-t="${s.type}">
+<div class="sh">${ph}<div class="si"><div class="st">${s.title}</div><div class="sm">${spN?`<span class="sp">${spN}</span>`:''}${tl[s.type]?`<span class="stp ${tc[s.type]}">${tl[s.type]}</span>`:''}${s.dur?`<span class="sd">${s.dur}</span>`:''}</div></div>
+${!isBrk?`<div class="sr"><button class="abtn wbtn ${wtt[k]?'on':''}" data-k="${k}" title="Want to talk to">\u{1F4AC}</button><button class="abtn ${bm[k]?'on':''}" data-k="${k}" title="Bookmark">\u2605</button><svg class="chv" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></div>`:''}</div>
+${!isBrk&&(absH||cards)?`<div class="det">${cards}${absH?`<div class="abs">${absH}</div>`:''}
+<div class="nts"><label>\u{1F4DD} Notes</label><textarea class="nta" data-k="${k}" placeholder="Jot something down..." rows="2">${notes[k]||''}</textarea></div>
+<div class="rating"><label>\u2B50 Rating</label><div class="stars">${starsH}</div></div>
+<div class="rating takeaway"><input class="tki" type="text" data-k="${k}" placeholder="Key takeaway in one line..." value="${(takes[k]||'').replace(/"/g,'&quot;')}"></div>
+</div>`:''}</div>`;
+}
+
+function scrollNow(){const el=document.getElementById('now-blk');if(el)el.scrollIntoView({behavior:'smooth',block:'start'})}
+function updateFab(){const b=document.getElementById('fab'),el=document.getElementById('now-blk');b.style.display=el?'block':'none';b.onclick=scrollNow}
+</script>
+</body>
+</html>
