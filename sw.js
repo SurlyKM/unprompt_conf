@@ -5,13 +5,12 @@
  * That means a schedule update shows up on the visit after the one that downloaded it.
  * Change CACHE below if you ever need to throw away everything stored on phones.
  */
-const CACHE = 'upsf26-v1';
+const CACHE = 'upsf26-v2';
 const CORE = [
   './', 'index.html', 'app.css', 'app.js', 'favicon.svg', 'data/agenda.json',
-  'fonts/inter-latin-wght-normal.woff2',
-  'fonts/ibm-plex-mono-latin-400-normal.woff2',
-  'fonts/ibm-plex-mono-latin-500-normal.woff2',
-  'fonts/ibm-plex-mono-latin-600-normal.woff2',
+  'fonts/bricolage-grotesque-latin-wght-normal.woff2',
+  'fonts/atkinson-hyperlegible-latin-400-normal.woff2',
+  'fonts/atkinson-hyperlegible-latin-700-normal.woff2',
 ];
 
 self.addEventListener('install', (e) => {

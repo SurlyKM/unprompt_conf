@@ -1,486 +1,638 @@
-/* [un]prompted II companion app.
+/* [un]prompted II companion, version 2.
  *
- * Reading guide:
- *   1. helpers and storage        (esc, store)
- *   2. time                       (sfNow: current San Francisco time)
- *   3. loading + preparing data   (agenda.json -> ITEMS, DAYS)
- *   4. clash detection
- *   5. rendering                  (strip, controls, session cards)
- *   6. events                     (taps, typing, timers)
+ * Layout and behaviour follow the BSides Canberra schedule app. Sections:
+ *   1. config, time helpers, storage
+ *   2. session model (agenda.json -> sessions)
+ *   3. clash detection and search
+ *   4. rendering (cards, Now, Schedule, My plan, header)
+ *   5. collapsing header and scrolling
+ *   6. details sheet (notes, rating, takeaway)
+ *   7. events and start-up
  *
- * Everything you save (bookmarks, notes, ratings) lives in this browser's localStorage.
- * Nothing leaves the device. Items are keyed by their `id` from agenda.json, which is
- * built from day + stage + start time, so your saves survive a refreshed schedule.
+ * Stars, notes, ratings and flags live in this browser's localStorage and never leave the phone.
+ * Each session has a stable id (day + stage + start time) from agenda.json.
  */
 (() => {
 'use strict';
 
-/* ---------- 1. helpers and storage ---------- */
-
+/* =====================================================================
+   1. CONFIG, TIME HELPERS, STORAGE
+   Everything displays in San Francisco time, whatever time zone the phone is in.
+   Add ?now=2026-10-27T10:05 to the URL to test as if it is that San Francisco moment.
+   ===================================================================== */
 const TZ = 'America/Los_Angeles';
-const $ = (s) => document.querySelector(s);
+const SF_OFFSET = '-07:00';          // PDT. Daylight saving ends on 1 Nov, after the conference.
+const DATA_URL = 'data/agenda.json';
 
-// Everything from the agenda goes through esc() before it touches innerHTML.
-const esc = (s) => String(s ?? '').replace(/[&<>"']/g,
+const fHM = new Intl.DateTimeFormat('en-GB', { timeZone: TZ, hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
+const fDay = new Intl.DateTimeFormat('en-CA', { timeZone: TZ, year: 'numeric', month: '2-digit', day: '2-digit' });
+const fLong = new Intl.DateTimeFormat('en-GB', { timeZone: TZ, weekday: 'long', day: 'numeric', month: 'long' });
+const fShort = new Intl.DateTimeFormat('en-GB', { timeZone: TZ, weekday: 'short', day: 'numeric', month: 'short' });
+const fTab = new Intl.DateTimeFormat('en-GB', { timeZone: TZ, weekday: 'short', day: 'numeric' });
+const hm = (ms) => fHM.format(ms);
+const shortDay = (ms) => fShort.format(ms).replace(/,/g, '');   // "Tue 27 Oct" without the comma
+const dayOf = (ms) => fDay.format(ms);
+const noon = (d) => Date.parse(`${d}T12:00:00${SF_OFFSET}`);
+
+const override = (() => {
+  const v = new URLSearchParams(location.search).get('now');
+  const t = v ? Date.parse(`${v}${v.length === 16 ? ':00' : ''}${SF_OFFSET}`) : NaN;
+  return Number.isFinite(t) ? { at: t, loaded: Date.now() } : null;
+})();
+const now = () => (override ? override.at + (Date.now() - override.loaded) : Date.now());
+
+const $ = (s) => document.querySelector(s);
+// Everything from the agenda goes through esc() before it is placed in HTML.
+const esc = (v) => String(v ?? '').replace(/[&<>"']/g,
   (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const short = (t, n = 40) => (t.length > n ? t.slice(0, n - 1).trimEnd() + '…' : t);
 
 // localStorage can throw (private tabs, blocked storage), so keep an in-memory copy as a fallback.
 const mem = {};
 const store = {
   get(k, d) {
-    try { const v = localStorage.getItem('upsf26-' + k); return v ? JSON.parse(v) : (k in mem ? mem[k] : d); }
+    try { const v = localStorage.getItem('upsf26-' + k); return v == null ? (k in mem ? mem[k] : d) : JSON.parse(v); }
     catch { return k in mem ? mem[k] : d; }
   },
   set(k, v) { mem[k] = v; try { localStorage.setItem('upsf26-' + k, JSON.stringify(v)); } catch { /* ignore */ } },
 };
 
-const bm = store.get('bm', {});        // bookmarks:       { id: true }
-const wtt = store.get('wtt', {});      // "want to talk to": { id: true }
-const notes = store.get('n', {});      // notes:           { id: "text" }
-const ratings = store.get('r', {});    // star ratings:    { id: 1..5 }
-const takes = store.get('tk', {});     // one-line takeaway: { id: "text" }
-const ui = Object.assign({ day: null, filter: 'all', view: 'day' }, store.get('ui', {}));
-// view: 'day' = one day, 'bm' = bookmarked across all days, 'wtt' = want-to-talk-to across all days
-
-let q = '';                            // search text (lower case)
-const open = new Set();                // ids of expanded cards, so re-renders keep them open
-
-const ICO = {
-  star: '<svg width="20" height="20" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.9-6.2-3.3-6.2 3.3 1.2-6.9-5-4.9 6.9-1z"/></svg>',
-  chat: '<svg width="20" height="20" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.38 8.5 8.5 0 0 1-4-1L3 20l1.12-5.5a8.38 8.38 0 0 1-1-4A8.38 8.38 0 0 1 11.5 3a8.5 8.5 0 0 1 9.5 8.5Z"/></svg>',
-  chev: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>',
-  pin: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>',
-  clock: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
-  warn: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="m10.3 3.9-8.2 14A2 2 0 0 0 3.8 21h16.4a2 2 0 0 0 1.7-3.1l-8.2-14a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4M12 17h.01"/></svg>',
-  down: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M12 5v14M5 12l7 7 7-7"/></svg>',
-};
-
-/* ---------- 2. time ---------- */
-
-// "Minutes since midnight" for 'HH:MM'.
-const toMin = (t) => { const [h, m] = t.split(':'); return +h * 60 + +m; };
-const hm = (min) => `${String(Math.floor(min / 60)).padStart(2, '0')}:${String(min % 60).padStart(2, '0')}`;
-// A date + minute-of-day as one number (minutes), handy for "how long until" sums.
-const absMin = (date, min) => { const [y, m, d] = date.split('-').map(Number); return Date.UTC(y, m - 1, d) / 60000 + min; };
-
-// The current time in San Francisco, whatever time zone the phone is in.
-// Add ?now=2026-10-27T10:05 to the URL to pretend it is that San Francisco time (for previewing).
-function sfNow() {
-  const o = new URLSearchParams(location.search).get('now');
-  const m = o && o.match(/^(\d{4}-\d{2}-\d{2})[T ](\d{2}):(\d{2})/);
-  if (m) return { date: m[1], min: +m[2] * 60 + +m[3] };
-  const p = {};
-  new Intl.DateTimeFormat('en-US', { timeZone: TZ, year: 'numeric', month: '2-digit', day: '2-digit',
-    hour: '2-digit', minute: '2-digit', hourCycle: 'h23' })
-    .formatToParts(new Date()).forEach((x) => { p[x.type] = x.value; });
-  return { date: `${p.year}-${p.month}-${p.day}`, min: +p.hour * 60 + +p.minute };
+let toastTimer;
+function toast(msg) {
+  const t = $('#toast'); t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
 }
 
-const WD = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-const MO = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-function dayParts(iso) {
-  const [y, m, d] = iso.split('-').map(Number);
-  return { wd: WD[new Date(Date.UTC(y, m - 1, d)).getUTCDay()], d, mon: MO[m - 1] };
+const svg = (body, extra = '') => `<svg viewBox="0 0 24 24" ${extra} aria-hidden="true">${body}</svg>`;
+const STAR_PATH = '<path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4-4.7-4.4 6.4-.8z"/>';
+const STAR = svg(STAR_PATH, 'fill="currentColor"');
+const STAR_O = svg(STAR_PATH, 'fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"');
+const CHEV = svg('<path d="M6 9l6 6 6-6"/>', 'fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"');
+const CHAT = svg('<path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.38 8.5 8.5 0 0 1-4-1L3 20l1.12-5.5a8.38 8.38 0 0 1-1-4A8.38 8.38 0 0 1 11.5 3a8.5 8.5 0 0 1 9.5 8.5Z"/>', 'fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"');
+const PENCIL = svg('<path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/>', 'fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"');
+
+// Saved data, keyed by session id. The same keys as version 1, so earlier stars carry over.
+let mine = store.get('bm', {});        // starred:            { id: true }
+let wtt = store.get('wtt', {});        // want to talk to:    { id: true }
+let notes = store.get('n', {});        // notes:              { id: "text" }
+let ratings = store.get('r', {});      // star rating:        { id: 1..5 }
+let takes = store.get('tk', {});       // one-line takeaway:  { id: "text" }
+
+/* =====================================================================
+   2. SESSION MODEL
+   ===================================================================== */
+let sessions = [], byKey = new Map(), DAYS = [], presentRooms = [], ROOMS = new Map(), DATA = null;
+
+function mk(it, order) {
+  const start = Date.parse(`${it.date}T${it.start}:00${SF_OFFSET}`);
+  let end = Date.parse(`${it.date}T${it.end}:00${SF_OFFSET}`);
+  const noEnd = !(end > start);                     // a few published end times are typos
+  if (noEnd) end = start;
+  const speakers = it.speakers || [];
+  const s = {
+    key: it.id, day: it.date, start, end, noEnd, track: it.track, room: ROOMS.get(it.track) || it.track,
+    tr: order.indexOf(it.track), title: it.title, kind: it.kind,
+    isBreak: it.kind === 'break',
+    long: it.kind === 'village',                    // villages run for hours, so they live in a strip
+    speakers, names: speakers.map((p) => p.name), abstract: it.abstract || [],
+    venue: it.venue || '', address: it.address || '', maps: it.maps || '',
+  };
+  s.hay = norm([s.title, s.room, s.venue, ...speakers.map((p) => `${p.name} ${p.role}`), ...s.abstract].join(' '));
+  return s;
 }
-const dayShort = (iso) => { const p = dayParts(iso); return `${p.wd} ${p.d}`; };
-const dayLong = (iso) => { const p = dayParts(iso); return `${p.wd} ${p.d} ${p.mon}`; };
+
+function setSessions(data) {
+  DATA = data;
+  ROOMS = new Map(data.tracks.map((t) => [t.id, t.name]));
+  const order = data.tracks.map((t) => t.id);
+  sessions = data.items.map((it) => mk(it, order)).sort((a, b) => a.start - b.start || a.tr - b.tr);
+  byKey = new Map(sessions.map((s) => [s.key, s]));
+  DAYS = [...new Set(sessions.map((s) => s.day))].sort();
+  presentRooms = order.filter((id) => sessions.some((s) => s.track === id && !s.isBreak));
+  rooms = rooms.filter((r) => presentRooms.includes(r));
+}
+
+/* =====================================================================
+   STATE
+   ===================================================================== */
+let view = store.get('view', 'now');             // now | schedule | plan
+if (!['now', 'schedule', 'plan'].includes(view)) view = 'now';
+let mode = store.get('mode', 'all');             // all | mine
+let rooms = store.get('rooms', []);              // stage ids to show. [] means all
+let query = '';
+let allDayOpen = store.get('allday', false);
+let day = null;
+
+/* =====================================================================
+   3. CLASH DETECTION AND SEARCH
+   ===================================================================== */
+// Breaks do not clash. Villages (CTF etc.) are drop-in, so they never count either.
+const clashable = (s) => !s.isBreak && !s.long;
+const overlap = (a, b) => a.start < b.end && b.start < a.end;
+
+function context() {
+  const t = now(), ms = new Set();
+  for (const k of Object.keys(mine)) if (mine[k] && byKey.has(k)) ms.add(k);
+  const list = [...ms].map((k) => byKey.get(k)).filter(clashable);
+  const map = new Map(), pairs = [];
+  for (let x = 0; x < list.length; x++) {
+    for (let y = x + 1; y < list.length; y++) {
+      if (overlap(list[x], list[y])) {
+        pairs.push([list[x], list[y]]);
+        if (!map.has(list[x].key)) map.set(list[x].key, []);
+        if (!map.has(list[y].key)) map.set(list[y].key, []);
+        map.get(list[x].key).push(list[y]);
+        map.get(list[y].key).push(list[x]);
+      }
+    }
+  }
+  return { t, ms, cl: { map, pairs, upcoming: pairs.filter(([a, b]) => Math.max(a.end, b.end) > t).length } };
+}
+
+const norm = (s) => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+const tokens = () => norm(query).split(/\s+/).filter(Boolean);
+const mineText = (s) => norm(`${notes[s.key] || ''} ${takes[s.key] || ''}`);
+const matches = (s, toks) => { const h = s.hay + ' ' + mineText(s); return toks.every((t) => h.includes(t)); };
+const reEsc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+function hl(text, toks) {
+  if (!toks.length) return esc(text);
+  const re = new RegExp(`(${toks.map(reEsc).join('|')})`, 'ig');
+  return String(text).split(re).map((p, i) => (i % 2 ? `<mark>${esc(p)}</mark>` : esc(p))).join('');
+}
+
+/* =====================================================================
+   4. RENDERING
+   ===================================================================== */
+const roomOn = (id) => !rooms.length || rooms.includes(id);
+
+function visible(s, c, ignoreRooms) {
+  if (s.isBreak) return mode === 'all';
+  if (!ignoreRooms && !roomOn(s.track)) return false;
+  if (mode === 'mine') return c.ms.has(s.key);
+  return true;
+}
 
 function span(mins) {
   if (mins >= 1440) return `${Math.floor(mins / 1440)}d ${Math.floor((mins % 1440) / 60)}h`;
   if (mins >= 60) return `${Math.floor(mins / 60)}h ${mins % 60}m`;
   return `${mins}m`;
 }
-
-/* ---------- 3. loading + preparing data ---------- */
-
-let DATA = null, ITEMS = [], DAYS = [], TRACKS = {}, ORDER = [];
-
-const TRACK_CLASS = { 'stage-1': 's1', 'stage-2': 's2', villages: 'vil', evening: 'eve' };
-const trackName = (id) => (TRACKS[id] && TRACKS[id].name) || id;
-const trackCls = (id) => TRACK_CLASS[id] || 's1';
-
-async function load() {
-  try {
-    const res = await fetch('data/agenda.json', { cache: 'no-cache' });
-    if (!res.ok) throw new Error(res.status);
-    return await res.json();
-  } catch { return null; }
+function whenText(start, t) {
+  const mins = Math.round((start - t) / 60000);
+  if (dayOf(start) === dayOf(t) && mins >= 0 && mins < 60) return `in ${mins} min`;
+  return dayOf(start) === dayOf(t) ? `at ${hm(start)}` : `${shortDay(start)} at ${hm(start)}`;
 }
+const timeRange = (s) => (s.noEnd ? hm(s.start) : `${hm(s.start)} to ${hm(s.end)}`);
 
-function prepare(data) {
-  DATA = data;
-  data.tracks.forEach((t) => { TRACKS[t.id] = t; ORDER.push(t.id); });
-  ITEMS = data.items.map((it) => {
-    const s = toMin(it.start), e = toMin(it.end);
-    const ok = e > s;                                  // a few published end times are typos
-    const text = [it.title, trackName(it.track), it.venue, it.address,
-      ...it.speakers.map((p) => `${p.name} ${p.role}`), ...it.abstract].join(' ').toLowerCase();
-    return Object.assign({}, it, { s, e: ok ? e : s, ok, tr: ORDER.indexOf(it.track), text });
-  }).sort((a, b) => a.date.localeCompare(b.date) || a.s - b.s || a.tr - b.tr);
+const starBtn = (s, on) =>
+  `<button class="star" type="button" data-star="${esc(s.key)}" aria-pressed="${on}" aria-label="${on ? 'Remove star' : 'Star'}: ${esc(s.title)}">${on ? STAR : STAR_O}</button>`;
 
-  DAYS = [...new Set(ITEMS.map((i) => i.date))].sort().map((iso) => ({
-    iso, n: ITEMS.filter((i) => i.date === iso && i.kind !== 'break').length,
-  }));
-
-  // Open on today if it is a conference day (San Francisco date), otherwise the first full day.
-  const today = sfNow().date;
-  if (DAYS.some((d) => d.iso === today)) ui.day = today;
-  else if (!DAYS.some((d) => d.iso === ui.day)) {
-    const first = DAYS.find((d) => ITEMS.some((i) => i.date === d.iso && i.kind === 'talk'));
-    ui.day = (first || DAYS[0]).iso;
+function clashLine(s, c) {
+  const others = c.cl.map.get(s.key);
+  if (others) return `<p class="cl">Clashes with ${others.map((o) => `${esc(short(o.title))} (${esc(o.room)})`).join(', ')}</p>`;
+  if (!c.ms.has(s.key) && clashable(s)) {
+    const over = [...c.ms].map((k) => byKey.get(k)).filter((p) => clashable(p) && overlap(s, p));
+    if (over.length) return `<p class="cl soft">Overlaps your pick: ${over.map((o) => esc(short(o.title))).join(', ')}</p>`;
   }
+  return '';
 }
 
-const byId = (id) => ITEMS.find((i) => i.id === id);
-const picks = () => ITEMS.filter((i) => bm[i.id]);
-const count = (o) => ITEMS.filter((i) => o[i.id]).length;
-
-/* ---------- 4. clash detection ---------- */
-
-// Breaks do not clash. Villages (CTF etc.) are drop-in all day, so they never count either.
-const clashable = (i) => i.kind !== 'break' && i.kind !== 'village';
-const overlap = (a, b) => a.date === b.date && a.s < b.e && b.s < a.e;
-
-// For each bookmarked, clashable item: the other bookmarked items it overlaps.
-function clashes() {
-  const list = picks().filter(clashable), map = {};
-  let pairs = 0;
-  for (let x = 0; x < list.length; x++) {
-    for (let y = x + 1; y < list.length; y++) {
-      if (overlap(list[x], list[y])) {
-        (map[list[x].id] = map[list[x].id] || []).push(list[y]);
-        (map[list[y].id] = map[list[y].id] || []).push(list[x]);
-        pairs++;
-      }
-    }
-  }
-  return { map, pairs };
+function marks(s) {
+  const out = [];
+  if (wtt[s.key]) out.push(`<span class="talk">${CHAT}Want to talk to</span>`);
+  if (notes[s.key]) out.push(`<span>${PENCIL}Note</span>`);
+  if (ratings[s.key]) out.push(`<span>${STAR.replace('<svg', '<svg width="15" height="15"')}${ratings[s.key]} of 5</span>`);
+  const take = takes[s.key] ? `<p class="inabs">${esc(takes[s.key])}</p>` : '';
+  return take + (out.length ? `<div class="marks">${out.join('')}</div>` : '');
 }
 
-/* ---------- 5. rendering ---------- */
-
-const short = (t, n = 38) => (t.length > n ? t.slice(0, n - 1).trimEnd() + '…' : t);
-
-const initials = (name) => {
-  const w = name.split(/\s+/).filter(Boolean);
-  return ((w[0] || '')[0] || '') + (w.length > 1 ? w[w.length - 1][0] : '');
-};
-
-function matches(i) {
-  if (!q) return true;
-  const hay = `${i.text} ${notes[i.id] || ''} ${takes[i.id] || ''}`.toLowerCase();
-  return q.split(/\s+/).every((t) => hay.includes(t));
+function card(s, c, opts = {}) {
+  const { t, ms } = c;
+  const live = s.start <= t && t < s.end, past = s.end > s.start ? t >= s.end : t >= s.start + 60000;
+  const on = ms.has(s.key), toks = opts.toks || [];
+  const pct = live ? Math.min(100, Math.round(((t - s.start) / (s.end - s.start)) * 100)) : 0;
+  const timing = opts.soon ? `<span class="soon">${esc(whenText(s.start, t))}</span>`
+    : live ? `<span>ends ${hm(s.end)}</span>` : `<span>${timeRange(s)}</span>`;
+  // If a search hit only the description, say so, otherwise the result looks random.
+  const seen = norm([s.title, s.names.join(' '), s.room, s.venue].join(' ') + ' ' + mineText(s));
+  const inAbs = toks.length && !toks.every((k) => seen.includes(k)) ? '<p class="inabs">Matches the talk description</p>' : '';
+  const who = s.kind === 'event' ? s.venue : s.names.join(', ');
+  const clash = c.cl.map.has(s.key);
+  return `<article class="card${live ? ' live' : ''}${past ? ' past' : ''}${clash ? ' clash' : ''}">
+    <div class="card-main" role="button" tabindex="0" data-open="${esc(s.key)}">
+      <div class="meta"><span class="room">${hl(s.room, toks)}</span>${timing}</div>
+      <h3>${hl(s.title, toks)}</h3>
+      ${who ? `<p class="who">${hl(who, toks)}</p>` : ''}
+      ${inAbs}${clashLine(s, c)}${marks(s)}
+      ${live && opts.progress ? `<div class="progress" aria-hidden="true"><i style="width:${pct}%"></i></div>` : ''}
+    </div>${starBtn(s, on)}</article>`;
 }
 
-// Which items to show for the current day / filter / view / search.
-function visible() {
-  let list = ITEMS;
-  const searching = q.length > 0;
-  if (ui.view === 'bm') list = list.filter((i) => bm[i.id]);
-  else if (ui.view === 'wtt') list = list.filter((i) => wtt[i.id]);
-  else if (!searching) list = list.filter((i) => i.date === ui.day);
-  if (ui.view === 'day' && ui.filter !== 'all') list = list.filter((i) => i.track === ui.filter);
-  if (searching) list = list.filter((i) => i.kind !== 'break' && matches(i));
-  if (ui.view !== 'day') list = list.filter((i) => i.kind !== 'break');
-  return list;
-}
-
-// Group a day's items into blocks that share a start time. The same break on both stages shows once.
-function blocks(items) {
-  const out = [], seen = new Set();
-  items.forEach((i) => {
-    if (i.kind === 'break') {
-      const key = `${i.title}|${i.s}|${i.e}`;
-      if (seen.has(key)) return;
-      seen.add(key);
-    }
-    let b = out[out.length - 1];
-    if (!b || b.s !== i.s) { b = { s: i.s, e: 0, items: [] }; out.push(b); }
-    b.items.push(i);
-  });
-  // Label end = earliest end among real sessions. A 3 hour village should not stretch a 25 minute slot.
-  out.forEach((b) => {
-    const pool = b.items.filter((i) => i.ok && i.kind !== 'village');
-    const ends = (pool.length ? pool : b.items.filter((i) => i.ok)).map((i) => i.e);
-    b.e = ends.length ? Math.min(...ends) : 0;
-  });
-  return out;
-}
-
-const liveKind = (i) => i.kind === 'talk' || i.kind === 'tbd' || i.kind === 'event';
-
-function card(i, ctx, blockEnd) {
-  const k = i.id;
-  if (i.kind === 'break') {
-    return `<article class="sess brk" data-k="${esc(k)}"><div class="sh"><div class="sbody"><div class="si">
-      <span class="st">${esc(i.title)}</span></div></div></div></article>`;
-  }
-  const isOpen = open.has(k), on = !!bm[k], w = !!wtt[k], r = ratings[k] || 0;
-  const live = ctx.now.date === i.date && i.s <= ctx.now.min && ctx.now.min < i.e && liveKind(i);
-  const clash = ctx.clash.map[k];
-  const names = i.speakers.map((p) => p.name).join(', ');
-  const av = i.speakers.length ? `<span class="av" aria-hidden="true">${esc(initials(i.speakers[0].name))}</span>` : '';
-  const sub = i.kind === 'event' ? esc(i.venue) : esc(names);
-  // Show "25m" normally, or the full time range when this item is longer than its slot (villages, events).
-  const dur = !i.ok ? '' : (i.e !== blockEnd || i.kind === 'village' || i.kind === 'event')
-    ? `<span class="sd">${hm(i.s)}–${hm(i.e)}</span>` : `<span class="sd">${i.e - i.s}m</span>`;
-
-  let hint = '';
-  if (clash) {
-    hint = `<div class="cl">${ICO.warn}<span>Clashes with ${clash.map((c) => `${esc(short(c.title))} (${esc(trackName(c.track))})`).join(', ')}</span></div>`;
-  } else if (!on && clashable(i)) {
-    const over = picks().filter((p) => clashable(p) && overlap(i, p));
-    if (over.length) hint = `<div class="cl soft"><span>Overlaps your pick: ${over.map((c) => esc(short(c.title))).join(', ')}</span></div>`;
-  }
-
-  const people = i.speakers.map((p) => `<div class="sc"><span class="av" aria-hidden="true">${esc(initials(p.name))}</span>
-    <div><h4>${esc(p.name)}</h4>${p.role ? `<div class="org">${esc(p.role)}</div>` : ''}</div></div>`).join('');
-  const venue = i.kind === 'event'
-    ? `<div class="venue"><strong>${esc(i.venue)}</strong><div>${esc(i.address)}</div>${i.maps ? `<a href="${esc(i.maps)}" target="_blank" rel="noopener">Open in Maps</a>` : ''}</div>` : '';
-  const abs = i.abstract.length ? `<div class="abs">${i.abstract.map((p) => `<p>${esc(p)}</p>`).join('')}</div>`
-    : (!i.speakers.length && i.kind !== 'event' ? '<div class="empty-det">No description published yet.</div>' : '');
-  const stars = [1, 2, 3, 4, 5].map((n) => `<button class="star ${n <= r ? 'lit' : ''}" type="button" data-n="${n}" aria-label="Rate ${n} of 5">${ICO.star}</button>`).join('');
-
-  return `<article class="sess ${isOpen ? 'exp' : ''} ${live ? 'is-now' : ''} ${clash ? 'clash' : ''}" data-k="${esc(k)}">
-  <div class="sh">
-    <button class="sbody" type="button" aria-expanded="${isOpen}">${av}<span class="si">
-      <span class="st">${esc(i.title)}</span>
-      <span class="sm">${sub ? `<span class="sp">${sub}</span>` : ''}<span class="stp ${trackCls(i.track)}">${esc(trackName(i.track))}</span>${dur}</span>
-      ${hint}</span></button>
-    <div class="sr">
-      <button class="abtn wtt ${w ? 'on' : ''}" type="button" data-a="wtt" aria-pressed="${w}" aria-label="Want to talk to">${ICO.chat}</button>
-      <button class="abtn bm ${on ? 'on' : ''}" type="button" data-a="bm" aria-pressed="${on}" aria-label="Bookmark">${ICO.star}</button>
-      <span class="chv">${ICO.chev}</span>
-    </div>
-  </div>
-  <div class="det"><div class="det-in" ${isOpen ? '' : 'inert'}>
-    ${venue}${people}${abs}
-    <div class="nts"><label for="n-${esc(k)}">Notes</label><textarea id="n-${esc(k)}" class="nta" rows="2" placeholder="Jot something down">${esc(notes[k] || '')}</textarea></div>
-    <div class="rating"><label>Rating</label><div class="stars">${stars}</div>
-      <input class="tki" type="text" placeholder="Key takeaway in one line" aria-label="Key takeaway" value="${esc(takes[k] || '')}"></div>
-  </div></div>
-</article>`;
-}
-
-function renderMain() {
-  const main = $('#main');
-  const list = visible();
-  const searching = q.length > 0, multi = searching || ui.view !== 'day';
-  if (!list.length) {
-    const msg = searching ? `Nothing matches “${esc(q)}”.`
-      : ui.view === 'bm' ? 'No bookmarks yet. Tap the star on a session to add it.'
-        : ui.view === 'wtt' ? 'Nobody on your list yet. Tap the chat icon on a talk to flag someone you want to meet.'
-          : 'No sessions to show.';
-    main.innerHTML = `<div class="no-r">${msg}</div>`;
-    setFab(null);
-    return;
-  }
-
-  const now = sfNow(), cl = clashes(), ctx = { now, clash: cl };
-  const today = list.filter((i) => i.date === now.date && liveKind(i));
-  const nextStart = today.filter((i) => i.s > now.min).reduce((m, i) => Math.min(m, i.s), Infinity);
-  let anchor = null;
-
-  const dates = [...new Set(list.map((i) => i.date))].sort();
-  main.innerHTML = dates.map((date) => {
-    const dayItems = list.filter((i) => i.date === date);
-    let html = multi ? `<h2 class="dhd">${esc(dayLong(date))}</h2>` : '';
-    // Notes such as "Stage 2 opens at 9:25", only for what is on screen.
-    const lines = [...new Set(dayItems.map((i) => i.track))].map((t) => {
-      const n = (DATA.trackNotes || {})[`${date}|${t}`];
-      return n ? (n.toLowerCase().startsWith(trackName(t).toLowerCase()) ? n : `${trackName(t)}: ${n.charAt(0).toLowerCase()}${n.slice(1)}`) : '';
-    }).filter(Boolean);
-    if (lines.length && !multi) html += `<p class="note-line">${esc(lines.join('  ·  '))}</p>`;
-
-    html += blocks(dayItems).map((b) => {
-      const talks = b.items.filter(liveKind);
-      const isNow = date === now.date && talks.some((i) => i.s <= now.min && now.min < i.e);
-      const isNext = date === now.date && talks.length && b.s === nextStart;
-      const badge = (isNow ? '<span class="badge now">NOW</span>' : '') + (isNext ? '<span class="badge nxt">UP NEXT</span>' : '');
-      const id = !anchor && (isNow || isNext) ? ' id="jump-blk"' : '';
-      if (id) anchor = isNow ? 'now' : 'next';
-      return `<section class="tblk"${id}><div class="tlbl">${hm(b.s)}${b.e ? '–' + hm(b.e) : ''} ${badge}</div>${b.items.map((i) => card(i, ctx, b.e)).join('')}</section>`;
-    }).join('');
-    return html;
+// Villages are long drop-in blocks, so they tuck into a strip instead of filling the timeline.
+function allDay(list, c) {
+  if (!list.length) return '';
+  const { t, ms } = c;
+  const liveCount = list.filter((s) => s.start <= t && t < s.end).length;
+  const rows = list.map((s) => {
+    const live = s.start <= t && t < s.end;
+    return `<div class="row${live ? ' live' : ''}">
+      <div class="card-main" role="button" tabindex="0" data-open="${esc(s.key)}">
+        <div class="meta"><span class="room">${esc(s.room)}</span><span>${timeRange(s)}</span></div>
+        <h3>${esc(s.title)}</h3>${marks(s)}
+      </div>${starBtn(s, ms.has(s.key))}</div>`;
   }).join('');
-  setFab(anchor);
+  const count = liveCount ? `${liveCount} on now` : `${list.length} today`;
+  return `<details class="allday"${allDayOpen ? ' open' : ''}><summary>Villages<span class="count">${count}</span>${CHEV}</summary>${rows}</details>`;
 }
 
-// The jump button hides itself while its target is already on screen, so it never covers a card's buttons.
-let fabObs = null;
-function setFab(kind) {
-  const f = $('#fab');
-  if (fabObs) { fabObs.disconnect(); fabObs = null; }
-  f.hidden = true;
-  const target = document.getElementById('jump-blk');
-  if (!kind || !target) return;
-  f.innerHTML = `${ICO.down} ${kind === 'now' ? 'Now' : 'Next'}`;
-  if ('IntersectionObserver' in window) {
-    fabObs = new IntersectionObserver(([en]) => { f.hidden = en.isIntersecting; });
-    fabObs.observe(target);
-  } else f.hidden = false;
-}
-
-function renderCtrl() {
-  const searching = q.length > 0, dayMode = ui.view === 'day' && !searching;
-  const bmC = count(bm), wtC = count(wtt);
-  const tracks = DATA.tracks.filter((t) => t.id !== 'evening');
-  $('#ctrl').innerHTML = `<div class="days" style="--n:${DAYS.length}" role="tablist" aria-label="Day">${DAYS.map((d) =>
-    `<button class="dtab ${dayMode && d.iso === ui.day ? 'on' : ''}" type="button" role="tab" aria-selected="${dayMode && d.iso === ui.day}" data-day="${d.iso}">${esc(dayShort(d.iso))}<span class="ct">${d.n}</span></button>`).join('')}</div>
-  <div class="filters">
-    <button class="fbtn ${ui.view === 'day' && ui.filter === 'all' ? 'on' : ''}" type="button" data-f="all">All</button>
-    ${tracks.map((t) => `<button class="fbtn ${ui.view === 'day' && ui.filter === t.id ? 'on' : ''}" type="button" data-f="${esc(t.id)}">${esc(t.name)}</button>`).join('')}
-    <button class="fbtn bm ${ui.view === 'bm' ? 'on' : ''}" type="button" data-view="bm" aria-label="Bookmarked, ${bmC}">${ICO.star.replace('width="20" height="20"', 'width="15" height="15"')}<span>${bmC || ''}</span></button>
-    <button class="fbtn wtt ${ui.view === 'wtt' ? 'on' : ''}" type="button" data-view="wtt" aria-label="Want to talk to, ${wtC}">${ICO.chat.replace('width="20" height="20"', 'width="15" height="15"')}<span>${wtC || ''}</span></button>
-  </div>`;
-}
-
-function renderStrip() {
-  const now = sfNow(), cl = clashes(), pills = [];
-  if (cl.pairs) {
-    pills.push(`<button class="pill warn" type="button" data-view="bm">${ICO.warn} ${cl.pairs} clash${cl.pairs > 1 ? 'es' : ''} in your picks</button>`);
+// Empty states say why it is empty and offer the one action that fixes it.
+function emptyState(c) {
+  if (mode === 'mine' && !c.ms.size) {
+    return '<div class="empty"><h2>No stars yet</h2><p>Tap the star on any talk to build your own day.</p><button class="btn ghost" type="button" data-mode="all">Show everyone</button></div>';
   }
-  pills.push(`<span class="pill">${ICO.pin} SF time <b>${hm(now.min)}</b></span>`);
+  const fixes = [];
+  if (rooms.length) fixes.push('<button class="btn ghost" type="button" data-act="clearrooms">Show all stages</button>');
+  if (mode !== 'all') fixes.push('<button class="btn ghost" type="button" data-mode="all">Show everyone</button>');
+  const why = rooms.length && mode !== 'all' ? 'your stage filter and view' : rooms.length ? 'your stage filter' : mode === 'mine' ? 'your stars' : '';
+  const when = view === 'now' ? 'for the rest of today' : 'on this day';
+  const msg = why ? `Nothing matches ${why} ${when}.` : `Nothing else is on ${when === 'on this day' ? 'this day' : 'today'}.`;
+  return `<div class="empty"><h2>Nothing here</h2><p>${msg}</p>${fixes.join(' ')}</div>`;
+}
 
-  const firstTalk = ITEMS.find((i) => i.kind === 'talk');
-  const last = ITEMS.filter((i) => i.kind !== 'event').slice(-1)[0];
-  const nowAbs = absMin(now.date, now.min);
-  if (firstTalk && nowAbs < absMin(firstTalk.date, firstTalk.s)) {
-    pills.push(`<span class="pill">Opens in <b>${span(absMin(firstTalk.date, firstTalk.s) - nowAbs)}</b></span>`);
-  } else if (last && nowAbs > absMin(last.date, last.e || last.s)) {
-    pills.push('<span class="pill">That’s a wrap</span>');
+const lastEnd = () => Math.max(0, ...sessions.filter((s) => !s.isBreak && s.kind !== 'event').map((s) => s.end));
+const confDays = () => [...new Set(sessions.filter((s) => s.kind === 'talk').map((s) => s.day))].sort();
+
+function clashBanner(c) {
+  const n = c.cl.upcoming;
+  if (!n) return '';
+  return `<button class="banner warn" type="button" data-view="plan">${n} ${n === 1 ? 'clash' : 'clashes'} in your plan. Tap to review.</button>`;
+}
+
+function renderNow(c) {
+  const { t } = c, dk = dayOf(t), cd = confDays(), di = cd.indexOf(dk);
+  let h = `<p class="clock">${hm(t)}</p><p class="today">San Francisco, ${esc(fLong.format(t))}${di >= 0 ? `, day ${di + 1} of ${cd.length}` : ''}</p>`;
+
+  const firstTalk = sessions.find((s) => s.kind === 'talk');
+  if (firstTalk && t < firstTalk.start) {
+    h += `<div class="banner">Day 1 starts in ${span(Math.round((firstTalk.start - t) / 60000))}</div>`;
   }
-  const next = picks().filter(clashable).filter((i) => absMin(i.date, i.s) > nowAbs)
-    .sort((a, b) => absMin(a.date, a.s) - absMin(b.date, b.s))[0];
-  if (next) {
-    pills.push(`<span class="pill">Next pick: ${esc(short(next.title, 26))} in <b>${span(absMin(next.date, next.s) - nowAbs)}</b></span>`);
+  h += clashBanner(c);
+  const brk = sessions.find((s) => s.isBreak && s.start <= t && t < s.end);
+  if (brk && mode === 'all') h += `<div class="banner">${esc(brk.title)} until ${hm(brk.end)}</div>`;
+
+  const live = sessions.filter((s) => !s.isBreak && s.start <= t && t < s.end && visible(s, c));
+  const longLive = live.filter((s) => s.long), talks = live.filter((s) => !s.long);
+  h += allDay(longLive, c);
+  if (talks.length) h += '<h2 class="sec">On now</h2>' + talks.map((s) => card(s, c, { progress: true })).join('');
+
+  const later = sessions.filter((s) => !s.isBreak && !s.long && s.start > t && visible(s, c));
+  const today = later.filter((s) => s.day === dk);
+  if (today.length) {
+    // Only look a short way ahead: the next hour, or 15 min past the earliest upcoming start if that is later.
+    const horizon = Math.max(t + 60 * 60000, today[0].start + 15 * 60000);
+    const seen = new Set(), next = [];
+    for (const s of today) {
+      if (s.start > horizon) break;                 // list is sorted by start time
+      if (!seen.has(s.track)) { seen.add(s.track); next.push(s); }
+    }
+    h += '<h2 class="sec">Up next</h2>' + next.map((s) => card(s, c, { soon: true })).join('');
+  } else if (!talks.length) {
+    const first = later[0];
+    if (first) {
+      const slot = later.filter((s) => s.start - first.start < 5 * 60000);
+      h += `<h2 class="sec">Next up, ${esc(shortDay(first.start))} at ${hm(first.start)}</h2>` + slot.map((s) => card(s, c)).join('');
+    } else if (t >= lastEnd()) {
+      h += '<div class="empty"><h2>That’s a wrap</h2><p>[un]prompted II is over. Your stars, notes and ratings are in My plan.</p></div>';
+    } else if (!longLive.length) {
+      h += emptyState(c);
+    }
   }
-  $('#cdown').innerHTML = pills.join('');
+  return h;
 }
 
-function renderAll() { renderCtrl(); renderMain(); renderStrip(); setHdr(); }
-
-function setHdr() {
-  document.documentElement.style.setProperty('--hdr-h', $('#hdr').offsetHeight + 'px');
+function renderSchedule(c) {
+  const list = sessions.filter((s) => s.day === day);
+  let h = clashBanner(c) + allDay(list.filter((s) => s.long && visible(s, c)), c);
+  let rest = list.filter((s) => !s.long && visible(s, c));
+  if (!rest.some((s) => !s.isBreak)) return h || emptyState(c);
+  // The same break appears once per stage. Show it once, and only when there is a talk before and after it.
+  const talks = rest.filter((s) => !s.isBreak), seenBrk = new Set();
+  rest = rest.filter((s) => {
+    if (!s.isBreak) return true;
+    const k = `${s.title}|${s.start}|${s.end}`;
+    if (seenBrk.has(k)) return false;
+    seenBrk.add(k);
+    return talks.some((x) => x.start < s.start) && talks.some((x) => x.start >= s.end);
+  });
+  let cur = null;
+  for (const s of rest) {
+    if (s.isBreak) { h += `<div class="brk">${hm(s.start)} ${esc(s.title)}</div>`; continue; }
+    if (s.start !== cur) { cur = s.start; h += `<h2 class="slot" data-start="${s.start}">${hm(s.start)}</h2>`; }
+    h += card(s, c);
+  }
+  return h;
 }
 
-// Re-render but keep the page where it is and put keyboard focus back.
-function rerender(focusSel) {
-  const y = window.scrollY, main = $('#main');
-  main.style.minHeight = main.offsetHeight + 'px';
-  renderAll();
-  main.style.minHeight = '';
-  window.scrollTo(0, y);
-  if (focusSel) { const el = document.querySelector(focusSel); if (el) el.focus({ preventScroll: true }); }
+function renderSearch(c) {
+  const toks = tokens();
+  const res = sessions.filter((s) => !s.isBreak && visible(s, c, true) && matches(s, toks));
+  const scope = mode === 'mine' ? ' in your stars' : '';
+  let h = !res.length ? '' : `<p class="note">${res.length} ${res.length === 1 ? 'result' : 'results'} across all days${scope}${rooms.length ? '. Stage filters are paused while you search' : ''}.</p>`;
+  if (!res.length) {
+    const widen = mode !== 'all' ? '<button class="btn ghost" type="button" data-mode="all">Search everyone</button> ' : '';
+    return h + `<div class="empty"><h2>No matches</h2><p>Nothing matches “${esc(query)}”. Try one word from the title or a speaker’s first name.</p>${widen}<button class="btn ghost" type="button" data-act="clearsearch">Clear search</button></div>`;
+  }
+  let cur = null;
+  for (const s of res) {
+    if (s.day !== cur) { cur = s.day; h += `<h2 class="dayhead">${esc(fLong.format(s.start))}</h2>`; }
+    h += card(s, c, { toks });
+  }
+  return h;
 }
 
-/* ---------- 6. events ---------- */
-
-function bind() {
-  const main = $('#main');
-
-  // Taps inside the list: expand/collapse, bookmark, want-to-talk-to, star rating.
-  main.addEventListener('click', (e) => {
-    const cardEl = e.target.closest('.sess');
-    if (!cardEl || cardEl.classList.contains('brk')) return;
-    const k = cardEl.dataset.k;
-
-    const act = e.target.closest('.abtn');
-    if (act) {
-      const store_ = act.dataset.a === 'bm' ? bm : wtt;
-      store_[k] = !store_[k];
-      if (!store_[k]) delete store_[k];
-      store.set(act.dataset.a === 'bm' ? 'bm' : 'wtt', store_);
-      if (navigator.vibrate) navigator.vibrate(8);
-      rerender(`.sess[data-k="${CSS.escape(k)}"] .abtn[data-a="${act.dataset.a}"]`);
-      return;
+function renderPlan(c) {
+  const starred = sessions.filter((s) => c.ms.has(s.key) && !s.isBreak);
+  const flagged = sessions.filter((s) => wtt[s.key] && !s.isBreak);
+  let h = '';
+  if (!starred.length && !flagged.length) {
+    h += '<div class="empty"><h2>No stars yet</h2><p>Tap the star on any talk to build your plan. Clashes, notes and ratings show up here.</p><button class="btn warm" type="button" data-view="schedule">Browse the schedule</button></div>';
+  } else {
+    const n = c.cl.pairs.length;
+    if (n) h += `<div class="banner warn">${n} ${n === 1 ? 'clash' : 'clashes'} in your plan. The clashing talks are outlined below.</div>`;
+    let cur = null;
+    for (const s of starred) {
+      if (s.day !== cur) { cur = s.day; h += `<h2 class="dayhead">${esc(fLong.format(s.start))}</h2>`; }
+      h += card(s, c);
     }
-    const star = e.target.closest('.star');
-    if (star) {
-      const n = +star.dataset.n;
-      if (ratings[k] === n) delete ratings[k]; else ratings[k] = n;     // tap the same star again to clear
-      store.set('r', ratings);
-      cardEl.querySelectorAll('.star').forEach((s) => s.classList.toggle('lit', +s.dataset.n <= (ratings[k] || 0)));
-      return;
-    }
-    if (e.target.closest('.sh')) {
-      const isOpen = cardEl.classList.toggle('exp');
-      if (isOpen) open.add(k); else open.delete(k);
-      cardEl.querySelector('.sbody').setAttribute('aria-expanded', isOpen);
-      cardEl.querySelector('.det-in').toggleAttribute('inert', !isOpen);
-    }
-  });
-
-  // Typing in notes / takeaway saves straight away.
-  main.addEventListener('input', (e) => {
-    const k = e.target.closest('.sess') && e.target.closest('.sess').dataset.k;
-    if (!k) return;
-    if (e.target.classList.contains('nta')) { notes[k] = e.target.value; if (!notes[k]) delete notes[k]; store.set('n', notes); }
-    if (e.target.classList.contains('tki')) { takes[k] = e.target.value; if (!takes[k]) delete takes[k]; store.set('tk', takes); }
-  });
-
-  // Day tabs and filter chips.
-  $('#ctrl').addEventListener('click', (e) => {
-    const d = e.target.closest('[data-day]'), f = e.target.closest('[data-f]'), v = e.target.closest('[data-view]');
-    if (d) { ui.day = d.dataset.day; ui.view = 'day'; setQuery(''); }
-    else if (f) { ui.filter = f.dataset.f; ui.view = 'day'; setQuery(''); }
-    else if (v) { ui.view = ui.view === v.dataset.view ? 'day' : v.dataset.view; setQuery(''); }
-    else return;
-    store.set('ui', ui);
-    renderAll();
-    window.scrollTo(0, 0);
-  });
-
-  $('#cdown').addEventListener('click', (e) => {
-    const v = e.target.closest('[data-view]');
-    if (v) { ui.view = v.dataset.view; setQuery(''); store.set('ui', ui); renderAll(); window.scrollTo(0, 0); }
-  });
-
-  $('#q').addEventListener('input', (e) => {
-    q = e.target.value.toLowerCase().trim();
-    renderCtrl(); renderMain();
-  });
-
-  $('#fab').addEventListener('click', jump);
-  window.addEventListener('resize', setHdr);
-  window.addEventListener('orientationchange', () => setTimeout(setHdr, 150));
-  document.addEventListener('visibilitychange', () => { if (!document.hidden) tick(); });
-  setInterval(tick, 30000);
+    // Starred talks already show their "Want to talk to" mark, so list only the ones not starred.
+    const flaggedOnly = flagged.filter((s) => !c.ms.has(s.key));
+    if (flaggedOnly.length) h += '<h2 class="sec">Want to talk to</h2>' + flaggedOnly.map((s) => card(s, c)).join('');
+  }
+  const gen = DATA && DATA.generated ? new Date(DATA.generated) : null;
+  const when = gen && !isNaN(gen) ? ` Snapshot taken ${esc(shortDay(gen))}.` : '';
+  h += `<section class="panel" style="margin-top:22px"><h2>About this schedule</h2>
+    <p class="muted">Agenda from <a href="${esc(DATA.conference.source)}" target="_blank" rel="noopener">unpromptedcon.org</a>.${when} All times are San Francisco time.</p>
+    <p class="muted">Stars, notes and ratings stay on this phone. Clearing the site’s data in Chrome removes them.</p></section>`;
+  return h;
 }
 
-function setQuery(v) { q = v; $('#q').value = v; }
+/* ---------- Header: status, switch, chips, days ---------- */
+function renderChrome() {
+  const c = context(), t = c.t;
+  const onNow = sessions.some((s) => !s.isBreak && s.kind !== 'event' && s.start <= t && t < s.end);
+  $('#status').innerHTML = `<i class="dot ${onNow ? 'ok' : ''}"></i><span>SF ${hm(t)}</span>`;
+  document.querySelectorAll('nav.tabs button').forEach((b) => b.setAttribute('aria-current', b.dataset.view === view ? 'page' : 'false'));
 
-function jump() {
-  const el = document.getElementById('jump-blk');
-  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  $('#filters').hidden = view === 'plan';
+  const segs = [['all', 'Everyone', null], ['mine', 'Mine', c.ms.size || null]];
+  $('#seg').innerHTML = segs.map(([m, l, n]) =>
+    `<button type="button" data-mode="${m}" aria-pressed="${mode === m}">${l}${n != null ? `<span class="n">${n}</span>` : ''}</button>`).join('');
+  $('#chips').innerHTML = presentRooms.map((id) =>
+    `<button class="chip" type="button" data-room="${esc(id)}" aria-pressed="${rooms.includes(id)}">${esc(ROOMS.get(id))}</button>`).join('');
+
+  const days = $('#days');
+  days.hidden = view !== 'schedule';
+  days.classList.toggle('dim', !!query);
+  days.innerHTML = DAYS.map((d) =>
+    `<button class="day" type="button" data-day="${d}" aria-pressed="${!query && d === day}">${esc(fTab.format(noon(d)))}</button>`).join('');
+  measureChrome();
 }
 
-// Every 30 seconds: refresh the strip and the NOW / UP NEXT badges, unless you are typing.
-function tick() {
-  renderStrip();
-  const a = document.activeElement;
-  if (a && a.closest && a.closest('#main') && /^(TEXTAREA|INPUT)$/.test(a.tagName)) return;
-  rerender();
+function renderView() {
+  const c = context();
+  $('#view').innerHTML = view !== 'plan' && query ? renderSearch(c) : view === 'now' ? renderNow(c) : view === 'schedule' ? renderSchedule(c) : renderPlan(c);
+}
+function render() { renderChrome(); renderView(); }
+
+/* =====================================================================
+   5. COLLAPSING HEADER AND SCROLLING
+   Scrolling down slides the brand, search and filters away (the day tabs stay).
+   Scrolling up brings them back, like Safari's toolbar.
+   ===================================================================== */
+const root = document.documentElement;
+let collapsed = false, lastY = 0, acc = 0, quietUntil = 0;
+function measureChrome() {
+  const ch = $('#chrome'), days = $('#days');
+  const h = ch.offsetHeight, keep = $('.notch').offsetHeight + (days.hidden ? 0 : days.offsetHeight);
+  root.style.setProperty('--chrome-h', h + 'px');
+  root.style.setProperty('--keep-h', keep + 'px');
+  root.style.setProperty('--hide', Math.max(0, h - keep - 1) + 'px');
+}
+function setCollapsed(v) { if (v !== collapsed) { collapsed = v; $('#chrome').classList.toggle('collapsed', v); } }
+function jumpTo(y) {
+  quietUntil = Date.now() + 500; setCollapsed(false);
+  window.scrollTo(0, Math.max(0, y)); lastY = Math.max(0, y); acc = 0;
+}
+addEventListener('scroll', () => {
+  const y = Math.max(0, window.scrollY), dy = y - lastY; lastY = y;
+  if (Date.now() < quietUntil) return;
+  if (y < 24) { setCollapsed(false); acc = 0; return; }
+  if (document.activeElement === $('#q') || document.querySelector('dialog[open]')) return;
+  if (Math.sign(dy) !== Math.sign(acc)) acc = 0;
+  acc += dy;
+  if (acc > 28) setCollapsed(true); else if (acc < -28) setCollapsed(false);
+}, { passive: true });
+new ResizeObserver(measureChrome).observe($('#chrome'));
+
+// Put the current time slot just under the header on today's schedule.
+function scrollToNow() {
+  if (view !== 'schedule' || query || day !== dayOf(now())) return jumpTo(0);
+  const t = now(); let target = null;
+  document.querySelectorAll('.slot').forEach((h) => { if (+h.dataset.start <= t) target = h; });
+  if (!target) return jumpTo(0);
+  jumpTo(target.getBoundingClientRect().top + window.scrollY - $('#chrome').offsetHeight - 8);
 }
 
-/* ---------- start ---------- */
+/* =====================================================================
+   6. DETAILS SHEET
+   ===================================================================== */
+const paras = (list) => list.map((p) => `<p>${esc(p)}</p>`).join('');
+let sheetPushed = false, dirty = false;
 
-(async function init() {
-  const data = await load();
-  if (!data) {
-    $('#main').innerHTML = '<div class="no-r">Couldn’t load the schedule.<br>Check your connection and reload.</div>';
+function openDetail(key) {
+  const s = byKey.get(key); if (!s) return;
+  const c = context(), on = c.ms.has(key), w = !!wtt[key], r = ratings[key] || 0;
+  const others = c.cl.map.get(key);
+  const alert = others ? `<div class="alert">Clashes with ${others.map((o) => `${esc(o.title)} (${esc(o.room)}, ${esc(timeRange(o))})`).join('; ')}</div>` : '';
+  const people = s.speakers.map((p) => `<div class="person"><strong>${esc(p.name)}</strong>${p.role ? `<span>${esc(p.role)}</span>` : ''}</div>`).join('');
+  const venue = s.kind === 'event' ? `<div class="venue"><p><strong>${esc(s.venue)}</strong></p><p class="muted">${esc(s.address)}</p>${s.maps ? `<p><a href="${esc(s.maps)}" target="_blank" rel="noopener">Open in Maps</a></p>` : ''}</div>` : '';
+  const body = s.abstract.length ? paras(s.abstract) : (s.kind === 'event' || s.kind === 'village' ? '' : '<p class="muted">No description published yet.</p>');
+  const stars = [1, 2, 3, 4, 5].map((n) => `<button type="button" class="${n <= r ? 'lit' : ''}" data-rate="${n}" aria-label="Rate ${n} of 5">${STAR}</button>`).join('');
+  const inner = $('#detailInner'), y = inner.scrollTop;
+  inner.innerHTML = `<button class="x" type="button" data-close aria-label="Close">×</button>
+    <div class="meta"><span>${esc(shortDay(s.start))}, ${esc(timeRange(s))}</span><span class="room">${esc(s.room)}</span></div>
+    <h2>${esc(s.title)}</h2>
+    ${s.names.length ? `<p class="who muted">${esc(s.names.join(', '))}</p>` : ''}
+    <div class="actions">
+      <button class="btn ${on ? 'ghost' : 'warm'}" type="button" data-star="${esc(key)}" aria-pressed="${on}">${on ? STAR : STAR_O}${on ? 'Starred' : 'Star this'}</button>
+      <button class="btn ghost" type="button" data-wtt="${esc(key)}" aria-pressed="${w}" style="${w ? 'border-color:var(--live);color:var(--live)' : ''}">${CHAT}${w ? 'Want to talk to' : 'Want to talk to?'}</button>
+    </div>
+    ${alert}
+    <div class="mynotes" data-k="${esc(key)}">
+      <h3>Your notes</h3>
+      <textarea id="note" rows="3" placeholder="Jot something down" aria-label="Your notes">${esc(notes[key] || '')}</textarea>
+      <label>Rating</label><div class="rate" role="group" aria-label="Rating">${stars}</div>
+      <label for="take">Key takeaway in one line</label>
+      <input id="take" type="text" value="${esc(takes[key] || '')}" placeholder="What will you remember?" style="margin-bottom:8px">
+    </div>
+    <div class="body" style="margin-top:14px">${body}</div>
+    ${s.speakers.length ? `<h3>${s.speakers.length > 1 ? 'Speakers' : 'Speaker'}</h3>${people}` : ''}
+    ${venue}`;
+  const d = $('#detail'); d.dataset.key = key;
+  if (!d.open) {
+    d.showModal();
+    // Chrome's back button should close the sheet, not leave the app.
+    history.pushState({ sheet: 1 }, ''); sheetPushed = true;
+    inner.scrollTop = 0;
+  } else inner.scrollTop = y;
+}
+
+function toggleStar(key) {
+  const s = byKey.get(key); if (!s) return;
+  if (mine[key]) { delete mine[key]; } else {
+    mine[key] = true;
+    const c = context(), o = c.cl.map.get(key);
+    if (o) toast(`Clashes with ${short(o[0].title, 34)}`);
+  }
+  store.set('bm', mine);
+  if (navigator.vibrate) navigator.vibrate(8);
+  render();
+  if ($('#detail').open && $('#detail').dataset.key === key) { dirty = true; openDetail(key); }
+}
+
+function toggleWtt(key) {
+  if (wtt[key]) delete wtt[key]; else wtt[key] = true;
+  store.set('wtt', wtt);
+  if (navigator.vibrate) navigator.vibrate(8);
+  render();
+  if ($('#detail').open && $('#detail').dataset.key === key) { dirty = true; openDetail(key); }
+}
+
+function setRooms(next) {
+  rooms = next.length === presentRooms.length ? [] : next;
+  store.set('rooms', rooms); render();
+}
+function toggleRoom(id) {
+  const sel = new Set(rooms);
+  if (sel.has(id)) sel.delete(id); else sel.add(id);
+  setRooms([...sel]);
+}
+
+/* =====================================================================
+   7. EVENTS AND START-UP
+   ===================================================================== */
+const q = $('#q');
+function clearSearch() {
+  q.value = ''; query = ''; $('.qclear').hidden = true;
+  render(); scrollToNow();
+}
+q.addEventListener('input', () => {
+  query = q.value.trim(); $('.qclear').hidden = !q.value;
+  renderChrome(); renderView(); jumpTo(0);
+});
+q.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') { e.preventDefault(); q.blur(); }      // dismiss the keyboard, keep results
+  if (e.key === 'Escape') clearSearch();
+});
+
+document.addEventListener('click', (e) => {
+  const el = e.target.closest('[data-star],[data-wtt],[data-open],[data-view],[data-day],[data-mode],[data-room],[data-act],[data-close],[data-rate],#status');
+  if (!el) {
+    if (e.target.matches('dialog.sheet')) e.target.close();      // tap on the backdrop
     return;
   }
-  prepare(data);
-  bind();
-  renderAll();
-  const gen = DATA.generated ? new Date(DATA.generated) : null;
-  const when = gen && !isNaN(gen) ? ` Snapshot taken ${gen.toISOString().slice(0, 10)}.` : '';
-  $('#ftr').innerHTML = `Agenda from <a href="${esc(DATA.conference.source)}" target="_blank" rel="noopener">unpromptedcon.org</a>.${when}<br>Bookmarks, notes and ratings stay on this device. All times are San Francisco time.`;
-  if (document.getElementById('jump-blk') && ui.view === 'day') setTimeout(jump, 400);
+  if (el.dataset.star) return toggleStar(el.dataset.star);
+  if (el.dataset.wtt) return toggleWtt(el.dataset.wtt);
+  if (el.dataset.open) return openDetail(el.dataset.open);
+  if (el.dataset.rate) {
+    const key = el.closest('.mynotes').dataset.k, n = +el.dataset.rate;
+    if (ratings[key] === n) delete ratings[key]; else ratings[key] = n;     // tap the same star again to clear
+    store.set('r', ratings); dirty = true;
+    el.parentNode.querySelectorAll('button').forEach((b) => b.classList.toggle('lit', +b.dataset.rate <= (ratings[key] || 0)));
+    return;
+  }
+  if (el.dataset.view) {
+    view = el.dataset.view; store.set('view', view);
+    if (view === 'plan' && query) { q.value = ''; query = ''; $('.qclear').hidden = true; }
+    render(); scrollToNow(); return;
+  }
+  if (el.dataset.day) {
+    if (query) { q.value = ''; query = ''; $('.qclear').hidden = true; }
+    day = el.dataset.day; render(); scrollToNow(); return;
+  }
+  if (el.dataset.mode) { mode = el.dataset.mode; store.set('mode', mode); render(); if (!query) scrollToNow(); return; }
+  if (el.dataset.room) { toggleRoom(el.dataset.room); if (!query) scrollToNow(); return; }
+  if (el.hasAttribute('data-close')) return el.closest('dialog').close();
+  if (el.id === 'status') { view = 'now'; store.set('view', view); render(); jumpTo(0); return; }
+  if (el.dataset.act === 'clearsearch') return clearSearch();
+  if (el.dataset.act === 'clearrooms') { setRooms([]); if (!query) scrollToNow(); }
+});
 
+// Typing in notes or the takeaway saves straight away. The list behind the sheet refreshes when it closes.
+document.addEventListener('input', (e) => {
+  const box = e.target.closest && e.target.closest('.mynotes'); if (!box) return;
+  const key = box.dataset.k;
+  if (e.target.id === 'note') { notes[key] = e.target.value; if (!notes[key]) delete notes[key]; store.set('n', notes); dirty = true; }
+  if (e.target.id === 'take') { takes[key] = e.target.value; if (!takes[key]) delete takes[key]; store.set('tk', takes); dirty = true; }
+});
+
+document.addEventListener('keydown', (e) => {
+  if ((e.key === 'Enter' || e.key === ' ') && e.target.dataset && e.target.dataset.open) { e.preventDefault(); openDetail(e.target.dataset.open); }
+});
+document.addEventListener('toggle', (e) => {
+  if (e.target.matches && e.target.matches('details.allday')) { allDayOpen = e.target.open; store.set('allday', allDayOpen); }
+}, true);
+
+// Sheet and the browser's back button.
+const sheet = $('#detail');
+sheet.addEventListener('close', () => {
+  if (sheetPushed) { sheetPushed = false; history.back(); }
+  if (dirty) { dirty = false; render(); }
+});
+window.addEventListener('popstate', () => { if (sheet.open) { sheetPushed = false; sheet.close(); } });
+
+// Touch: dismiss the keyboard when you start scrolling results, and swipe left or right to change day.
+let sx = 0, sy = 0, st = 0;
+$('#view').addEventListener('touchstart', (e) => {
+  if (document.activeElement === q) q.blur();
+  const p = e.touches[0]; sx = p.clientX; sy = p.clientY; st = Date.now();
+}, { passive: true });
+$('#view').addEventListener('touchend', (e) => {
+  if (view !== 'schedule' || query) return;
+  const p = e.changedTouches[0], dx = p.clientX - sx, dy = p.clientY - sy;
+  if (Math.abs(dx) < 70 || Math.abs(dy) > 45 || Date.now() - st > 600) return;
+  const i = DAYS.indexOf(day) + (dx < 0 ? 1 : -1);
+  if (i < 0 || i >= DAYS.length) return;
+  day = DAYS[i]; render(); scrollToNow();
+}, { passive: true });
+
+function tick() {
+  if (document.visibilityState !== 'visible' || sheet.open) return;
+  renderChrome(); renderView();
+}
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') tick(); });
+window.addEventListener('resize', measureChrome);
+
+(async function start() {
+  let data = null;
+  try {
+    const res = await fetch(DATA_URL, { cache: 'no-cache' });
+    if (!res.ok) throw new Error(res.status);
+    data = await res.json();
+  } catch { /* handled below */ }
+  if (!data) {
+    $('#view').innerHTML = '<div class="empty"><h2>Couldn’t load the schedule</h2><p>Check your connection and reload. Once it has loaded once, it works offline.</p></div>';
+    return;
+  }
+  setSessions(data);
+  const today = dayOf(now());
+  day = DAYS.includes(today) ? today : (confDays()[0] || DAYS[0]);
+  render();
+  scrollToNow();
+  setInterval(tick, 30000);
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+    if (document.readyState === 'complete') navigator.serviceWorker.register('sw.js').catch(() => {});
   }
 })();
 
