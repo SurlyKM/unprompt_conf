@@ -1,0 +1,2297 @@
+{
+ "conference": {
+  "name": "[un]prompted II",
+  "tagline": "The AI Security Practitioner Conference",
+  "city": "San Francisco",
+  "timezone": "America/Los_Angeles",
+  "source": "https://unpromptedcon.org/agenda-10-2026/"
+ },
+ "generated": "2026-10-11T00:40:58Z",
+ "tracks": [
+  {
+   "id": "stage-1",
+   "name": "Stage 1"
+  },
+  {
+   "id": "stage-2",
+   "name": "Stage 2"
+  },
+  {
+   "id": "villages",
+   "name": "Villages"
+  },
+  {
+   "id": "evening",
+   "name": "Evening"
+  }
+ ],
+ "trackNotes": {
+  "2026-10-27|stage-2": "Stage 2 opens at 9:25",
+  "2026-10-27|villages": "Opens at 9:25",
+  "2026-10-28|stage-2": "Stage 2 opens at 9:35",
+  "2026-10-28|villages": "Opens at 9:35",
+  "2026-10-29|stage-2": "Stage 2 opens at 9:35",
+  "2026-10-29|villages": "Opens at 9:35"
+ },
+ "items": [
+  {
+   "date": "2026-10-26",
+   "track": "evening",
+   "start": "18:00",
+   "end": "22:00",
+   "title": "Opening Event – Unofficial Reception",
+   "kind": "event",
+   "venue": "The UNDERDOGS Cantina",
+   "address": "128 King St, San Francisco, CA 94107",
+   "maps": "https://www.google.com/maps/search/?api=1&query=The+UNDERDOGS+Cantina%2C+128+King+St%2C+San+Francisco%2C+CA+94107",
+   "speakers": [],
+   "abstract": [],
+   "id": "2026-10-26-evening-1800"
+  },
+  {
+   "date": "2026-10-27",
+   "track": "stage-1",
+   "start": "08:30",
+   "end": "09:00",
+   "title": "Gathering & Mingling",
+   "kind": "break",
+   "speakers": [],
+   "abstract": [],
+   "id": "2026-10-27-stage-1-0830"
+  },
+  {
+   "date": "2026-10-27",
+   "track": "stage-1",
+   "start": "09:00",
+   "end": "09:25",
+   "title": "Opening Words",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Gadi Evron",
+     "role": "CEO, Knostic. CFP Chair, [un]prompted, Knostic"
+    }
+   ],
+   "abstract": [],
+   "id": "2026-10-27-stage-1-0900"
+  },
+  {
+   "date": "2026-10-27",
+   "track": "stage-1",
+   "start": "09:25",
+   "end": "09:35",
+   "title": "Move between rooms",
+   "kind": "break",
+   "speakers": [],
+   "abstract": [],
+   "id": "2026-10-27-stage-1-0925"
+  },
+  {
+   "date": "2026-10-27",
+   "track": "villages",
+   "start": "09:25",
+   "end": "12:25",
+   "title": "CTF",
+   "kind": "village",
+   "speakers": [],
+   "abstract": [],
+   "id": "2026-10-27-villages-0925"
+  },
+  {
+   "date": "2026-10-27",
+   "track": "stage-1",
+   "start": "09:35",
+   "end": "10:00",
+   "title": "“WTF was that?” Dispatches from the wrong end of an agent swarm",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Caleb Sima",
+     "role": ""
+    }
+   ],
+   "abstract": [],
+   "id": "2026-10-27-stage-1-0935"
+  },
+  {
+   "date": "2026-10-27",
+   "track": "stage-2",
+   "start": "09:35",
+   "end": "10:00",
+   "title": "All Tokens Are Created Equal, Including the Attacker’s",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Rock Lambros",
+     "role": "Director of AI Standards and Governance, Zenity"
+    },
+    {
+     "name": "Fred Wilmot",
+     "role": "CEO & co-founder , Detecteam"
+    }
+   ],
+   "abstract": [
+    "EchoLeak (CVE-2025-32711, CVSS 9.3) walked data out of Microsoft 365 Copilot with zero clicks. No memory bug. No blown permission. Attacker text landed in the context window and the model did what it said, because transformer attention reads no trust label on any token. Your system prompt, a poisoned README, and an MCP tool definition all get the same scaled dot-product treatment.",
+    "So we measured it. Attention mass on the protective span collapsing as an attacker floods the window, plotted against attack success climbing. Then we built the thing nobody has: a record of what the model actually saw. We’re releasing CxBOM, a CycloneDX-based bill of materials for the context window. It logs every component, its trust ring, and its provenance, and it fails the session when an externally supplied MCP tool definition is assembled with operator-level authority. That inversion is the bug behind CVE-2025-54135 and CVE-2025-54136.",
+    "Live demo. Schema, emitter, validator, fixtures. Yours to run."
+   ],
+   "id": "2026-10-27-stage-2-0935"
+  },
+  {
+   "date": "2026-10-27",
+   "track": "stage-1",
+   "start": "10:00",
+   "end": "10:25",
+   "title": "Taming AI Agents with Capsem: Hardware Sandboxing That Doesn’t Kill Productivity",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Elie Bursztein",
+     "role": "Distinguished Research Scientist, Google DeepMind"
+    }
+   ],
+   "abstract": [
+    "Enterprises are racing to adopt AI agents granting them access to data, networks, code execution, and beyond. Yet between prompt injection, hallucination, and agents going rogue, poorly restricted access is a security nightmare that weakly secured environments can no longer bandage over, as proven by recent model sandbox escapes.",
+    "Capsem is an open-source, Rust co-designed hypervisor/VM system designed to fill the need of a highly secure agent environment. What makes it unique is its core premise being that to be successful should not make users choose between speed, usability and security.",
+    "Users love Capsem for its single-click install, optional friendly UI, and agent-ready VMs booting under two seconds. Security endorses its air-gapped, hardened VMs, and leverages its full observability and enforcement mechanisms—including its L8 network reconstruction layer with full model and MCP semantics. Admins rely on its SDK and standard support for Sigma and OpenTelemetry."
+   ],
+   "id": "2026-10-27-stage-1-1000"
+  },
+  {
+   "date": "2026-10-27",
+   "track": "stage-2",
+   "start": "10:00",
+   "end": "10:25",
+   "title": "Attention Is All You Need (to Catch Hallucinations & Prompt Injections)",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Saurabh Shintre",
+     "role": "Founder & CEO, Realm Labs Inc"
+    },
+    {
+     "name": "Akash Mukherjee",
+     "role": "Cofounder, Realm Labs Inc"
+    }
+   ],
+   "abstract": [
+    "Two of the biggest trust and security challenges of LLM: hallucinations (ungrounded facts) and indirect prompt injections (unauthorized instructions) are often believed to be unrelated.",
+    "Existing blackbox methods for detecting these problems are distinct, often too slow, expensive, and unreliable.",
+    "This talk highlights a major breakthrough in whitebox analysis that shows that these problems are actually related and can be solved with the same approach simultaneously. Our key insight is that LLMs are incapable of permanently storing specific facts or instructions. Instead, when they need a fact or instruction, they “look back” to the relevant part of the input. By observing these hidden states during these token generation, we can identify exactly which input tokens the model relied on for each factual statement or instruction it follows.",
+    "Our solution works in real time, requires no additional LLM calls, and outperforms state of the art on multiple benchmarks."
+   ],
+   "id": "2026-10-27-stage-2-1000"
+  },
+  {
+   "date": "2026-10-27",
+   "track": "stage-1",
+   "start": "10:25",
+   "end": "10:45",
+   "title": "Coffee break",
+   "kind": "break",
+   "speakers": [],
+   "abstract": [],
+   "id": "2026-10-27-stage-1-1025"
+  },
+  {
+   "date": "2026-10-27",
+   "track": "stage-2",
+   "start": "10:25",
+   "end": "10:45",
+   "title": "Coffee break",
+   "kind": "break",
+   "speakers": [],
+   "abstract": [],
+   "id": "2026-10-27-stage-2-1025"
+  },
+  {
+   "date": "2026-10-27",
+   "track": "stage-1",
+   "start": "10:45",
+   "end": "11:10",
+   "title": "Beyond Vulnerability Detection: Building an AI-Native Security Engineering Pipeline",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Tanu Jain",
+     "role": "Security Engineer, Meta"
+    }
+   ],
+   "abstract": [
+    "Mobile application security has traditionally been reactive: finding vulnerabilities after they are introduced and fixing issues one at a time. This talk presents how we built an AI-native security engineering pipeline that continuously understands applications, evaluates security posture, learns from historical vulnerabilities, and drives prevention at scale.",
+    "I will share practical lessons from building an automated system that enumerates application components, applies specialized AI security analysis workflows, performs root-cause analysis on past vulnerabilities, and converts recurring security issues into secure-by-default frameworks and preventative controls. Attendees will learn architectural patterns for using AI to build continuous security systems rather than isolated AI-powered tools."
+   ],
+   "id": "2026-10-27-stage-1-1045"
+  },
+  {
+   "date": "2026-10-27",
+   "track": "stage-2",
+   "start": "10:45",
+   "end": "11:10",
+   "title": "Into the Wild: Hunting Real-World Attacks on AI Systems",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Mike Takahashi",
+     "role": "Zenity"
+    }
+   ],
+   "abstract": [
+    "Until now, AI security research has lived mostly in the lab, while AI systems went online. This created a knowledge gap: defenders lack threat intelligence from real AI incidents.",
+    "To discover what attackers do in the wild, we deployed a honeypot network emulating production AI stacks and agents. This talk is the forensic report.",
+    "We show campaigns probing for CVEs to compromise AI backends within days of being published, turning Ollama’s model downloader into an SSRF vector, and LiteLLM’s guardrails into a code execution vector. We’ll detail attacks on models, and attempts to create backdoored models stripping safety controls or to exfiltrate telemetry.",
+    "We display attempts to hijack backends and deploy offensive frameworks to turn exposed AI infra into free compute. We demonstrate activity probing for frontier models and agents’ capabilities, and abusing agents’ own tools to extract secrets.",
+    "We share TTPs, IoCs, signatures, configurations and enabling design patterns."
+   ],
+   "id": "2026-10-27-stage-2-1045"
+  },
+  {
+   "date": "2026-10-27",
+   "track": "stage-1",
+   "start": "11:10",
+   "end": "11:35",
+   "title": "From DARPA AIxCC to Microsoft FORGE Lab: Lessons Building Hyperscale AI Code Scanning Tools",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Taesoo Kim",
+     "role": "VP, Security Research, Microsoft"
+    }
+   ],
+   "abstract": [
+    "Team Atlanta’s victory in the DARPA AI Cyber Challenge (AIxCC), where AI systems autonomously discovered and repaired vulnerabilities in complex software, was only the beginning. Since AIxCC, we have been evolving AI vulnerability discovery into production systems for open-source and commercial codebases. Drawing from MDASH and Microsoft FORGE Lab, this talk examines how modern AI\\-powered code scanning combines LLM reasoning with traditional program analysis to find real vulnerabilities at scale.",
+    "We will discuss lessons learned operationalizing autonomous security systems, emerging technical patterns behind modern AI bug-finding platforms, and how AI agents may transform software security in the future."
+   ],
+   "id": "2026-10-27-stage-1-1110"
+  },
+  {
+   "date": "2026-10-27",
+   "track": "stage-2",
+   "start": "11:10",
+   "end": "11:35",
+   "title": "Say Shibboleth: Fingerprinting the Models Behind Agentic Attacks",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Sergej Epp",
+     "role": "Leading infosec and threat research"
+    },
+    {
+     "name": "Dario Pasquini",
+     "role": "Head of AI, Cracken"
+    }
+   ],
+   "abstract": [
+    "Last year at [un]prompted, we showed that AI-assisted attackers leak an “accent”: timing gaps, hallucinated identifiers, tool artifacts and other model-specific behavior. Those signals are accidental. This talk turns them into a measurement method.",
+    "We introduce shibboleths: realistic features placed in an attacker’s environment specifically because different models respond to them differently without requiring prompt injection or adversarial instructions. Combined with passive telemetry, they let us fingerprint the model family and agent harness behind an attack even when the model is self-hosted and its claimed identity cannot be trusted.",
+    "We show how to generate and optimize these traps, demonstrate fingerprinting end-to-end against autonomous attackers, and present results from a controlled model/harness matrix and live honeypot deployment including where the method fails. The result is a new telemetry layer for investigating and clustering AI-driven attacks."
+   ],
+   "id": "2026-10-27-stage-2-1110"
+  },
+  {
+   "date": "2026-10-27",
+   "track": "stage-1",
+   "start": "11:35",
+   "end": "12:00",
+   "title": "StealthBench: Can Autonomous Security Agents Do OPSEC Like An Experienced Operator?",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Adrian Wood",
+     "role": "Security Engineer, Dropbox"
+    },
+    {
+     "name": "Ads Dawson",
+     "role": "Staff AI Security Researcher at Dreadnode; founder of OWASP GenAI Security Project; AI red teamer and bug bounty hunter"
+    }
+   ],
+   "abstract": [
+    "Autonomous security agents are usually judged on whether they find the vulnerability. In a real engagement, that is only half the job: an agent that leaks credentials, modifies production, spams users, or floods telemetry can turn a successful exploit into an operational failure and a detection. A very stealthy model is thu a more dangerous one.",
+    "We introduce StealthBench, an open-source benchmark that measures task completion and operational security together. Fourteen containerized scenarios test credential handling, detection avoidance, infrastructure compartmentalization, operational impact, and third-party harm. Across 771 trajectories from eight agent models, no model achieved a safe-success rate above 53.8%. Some highly capable models solved most tasks yet did so recklessly in more than one-third of valid attempts.",
+    "This talk presents the benchmark, the failure patterns it exposes, and practical lessons for evaluating agents before granting them offensive-security tools."
+   ],
+   "id": "2026-10-27-stage-1-1135"
+  },
+  {
+   "date": "2026-10-27",
+   "track": "stage-2",
+   "start": "11:35",
+   "end": "12:00",
+   "title": "Who Is Prompt-Injecting Coding Agents? A Scan of 86 Million GitHub Items",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Gabi Nakibly",
+     "role": "Distinguished Researcher, Radware"
+    },
+    {
+     "name": "Zvika Babo",
+     "role": "Senior AI security researcher, Radware"
+    }
+   ],
+   "abstract": [
+    "A hidden HTML comment in a GitHub issue can hijack a coding agent. This has been repeatedly shown in demos and research PoCs. But how often are attackers in the wild actually trying it, and what do they want?",
+    "We launched the first GitHub-wide scan to hunt for indirect prompt injections across 86 million GitHub items: issues, PRs, comments and READMEs. We extracted hidden text (e.g., HTML comments) then screened it with novel heuristics and a two-stage LLM classifier. We then manually reviewed every flagged candidate.",
+    "We identified prompt injections in roughly 2.5 of every 100K GitHub items. A key finding is that injections serve diverse objectives: orchestration of project agents, constrain visiting bots, growth hacking, and malicious exfil data.",
+    "We’ll dissect real injections, map their objectives, and explain our detection blind spots. We release the detector, prompts, and taxonomy so others can investigate who is steering coding agents and why."
+   ],
+   "id": "2026-10-27-stage-2-1135"
+  },
+  {
+   "date": "2026-10-27",
+   "track": "stage-1",
+   "start": "12:00",
+   "end": "13:30",
+   "title": "Lunch break",
+   "kind": "break",
+   "speakers": [],
+   "abstract": [],
+   "id": "2026-10-27-stage-1-1200"
+  },
+  {
+   "date": "2026-10-27",
+   "track": "stage-2",
+   "start": "12:00",
+   "end": "12:25",
+   "title": "Promptware EOD: Skillful Agent Detonation",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Tamir Ishay Sharbat",
+     "role": "Director of Security Research"
+    }
+   ],
+   "abstract": [
+    "The AI agent supply chain is fertile ground for malware. Lurking in skill files, rug-pulled MCP servers, misaligned models, and even moltbook posts",
+    "Standing on the shoulders of giants, we introduce an old-new approach: agent detonation chamber. Analysis based on kernel-level truths, not a wishful LLM scan. We detonated tens of thousands of skills from public marketplaces, and uncovered hundreds of malicious ones. We’ll show how cryptominers and infostealers evade static scanners using advanced techniques, expose risky patterns, and uncover the slop of skill design",
+    "Inside the chamber, a victim agent installs a suspicious artifact, while a red-team agent tries to make it use the new skill. By comparing what the victim “thinks” it did with what the kernel knows happened the chamber reveals malicious behavior static tools miss",
+    "To wrap up we’ll release our detonation chamber as free public service. As well as drop a unique verified benchmark of supply chain artifacts caught in the wild"
+   ],
+   "id": "2026-10-27-stage-2-1200"
+  },
+  {
+   "date": "2026-10-27",
+   "track": "stage-2",
+   "start": "12:25",
+   "end": "13:30",
+   "title": "Lunch break",
+   "kind": "break",
+   "speakers": [],
+   "abstract": [],
+   "id": "2026-10-27-stage-2-1225"
+  },
+  {
+   "date": "2026-10-27",
+   "track": "villages",
+   "start": "12:25",
+   "end": "13:30",
+   "title": "Lunch break",
+   "kind": "break",
+   "speakers": [],
+   "abstract": [],
+   "id": "2026-10-27-villages-1225"
+  },
+  {
+   "date": "2026-10-27",
+   "track": "stage-1",
+   "start": "13:30",
+   "end": "13:55",
+   "title": "Prompt, Patch, Prove",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Tim de Waal",
+     "role": "Member of Technical Staff, OpenAI"
+    }
+   ],
+   "abstract": [
+    "Attackers can analyze firmware in hours. Defenders may wait weeks for an update. Can defenders build temporary, testable repairs without pretending to replace the vendor?",
+    "On an authorized ASUS RT-BE82U laboratory router, we used an agentic coding model to analyze build 39099 and repair two published vulnerabilities: CVE-2025-15101, an authenticated command injection in the root web server, and CVE-2026-11851, an authenticated SQL-injection path. The model traced request data into the exact ARM sinks, proposed hash-locked patches, generated negative tests, and helped reconstruct the firmware package.",
+    "I will show the original and patched assembly, what the model got wrong, the evidence gates that caught it, and a reusable prompting protocol for defensive binary repair."
+   ],
+   "id": "2026-10-27-stage-1-1330"
+  },
+  {
+   "date": "2026-10-27",
+   "track": "stage-2",
+   "start": "13:30",
+   "end": "13:55",
+   "title": "Sandboxing agents is a three-body problem: containment, provenance, and the human authority",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Ankit Agrawal",
+     "role": "Head of Application Security, Webflow"
+    }
+   ],
+   "abstract": [
+    "Every sandboxing guide treats agent containment as one problem. Building Webflow’s agent-native design and collaboration platform (in research preview) we found at least three, and they pull on each other.",
+    "Containment: what the process can touch.",
+    "Provenance: whether the agent can tell instruction from data. Authority: who may act, who confirms, and what that confirmation binds to.",
+    "Each is solvable alone. Coupled, they behave like the three-body problem: tighten one and the other two move",
+    "This talk is about sequencing. Why our first boundary confined writes rather than reads, and why we framed it as anti-persistence instead of anti-damage. Why the iframe boundary had to be destination-driven. How a governance layer lets the host, not the model, decide what each agent and user may do. What came next, and how each boundary was tested and some live approval telemetry from the research preview:",
+    "You leave with a way to decide which body to harden first for your agent."
+   ],
+   "id": "2026-10-27-stage-2-1330"
+  },
+  {
+   "date": "2026-10-27",
+   "track": "villages",
+   "start": "13:30",
+   "end": "17:35",
+   "title": "CTF",
+   "kind": "village",
+   "speakers": [],
+   "abstract": [],
+   "id": "2026-10-27-villages-1330"
+  },
+  {
+   "date": "2026-10-27",
+   "track": "stage-1",
+   "start": "13:55",
+   "end": "14:20",
+   "title": "Your sandbox degrades gracefully, what’s the wurst that could happen?",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Daniel Cuthbert",
+     "role": "Security Researcher, Dinosaur Wrangler"
+    }
+   ],
+   "abstract": [
+    "RAPTOR is an agentic security harness for finding bugs: an LLM reads a repository nobody has vetted, writes proof-of-concepts from what it finds, and runs them on a machine holding our API keys and everything else dear to us. We’ve been around the block, and weren’t comfortable running that outside a sandbox, so back in April we built an agent-specific one to contain it. We’ve upgraded it considerably since, and along the way introduced (and had to fix) a fair few security issues of our own making.",
+    "We don’t think we’re that innovative (or cool actually), we just believed it was necessary – but it was much harder than it looks. Oh yah, everyone tells us how easy making a sandbox is. This talk is the embarrassing lessons behind what is now a hardened agent sandbox, attack-ready, until the next time we figure out how to break it by trying to upgrade it. Four months in, we’re still finding out how little we knew about constraining dinosaurs and how often they tried to eat our faces."
+   ],
+   "id": "2026-10-27-stage-1-1355"
+  },
+  {
+   "date": "2026-10-27",
+   "track": "stage-2",
+   "start": "13:55",
+   "end": "14:20",
+   "title": "The Model Is NOT a Security Control: Prompt Injection Dies at the Token Sampler",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Vince Ovando",
+     "role": "AI Security Reseacher & Engineer"
+    }
+   ],
+   "abstract": [
+    "Tantalus is a 2-round indirect prompt injection arena that puts you in front of a realistic AI assistant with access to files, emails, and chat history, pre-loaded with both legitimate tools and poisoned ones. The objective is to try to get the agent to exfiltrate data from an IT admin’s workstation.",
+    "With Tantalus as the substrate for my first whitepaper https://doi.org/10.17605/OSF.IO/S9GU6, I put it through the ringer across ~6.1 million inference calls; across model sizes 1.7B to 119B params. All behavioral and structural controls were bypassed or allowed malicious data to be generated, except for one.",
+    "Only one control had a provable 100% rate at blocking bad behavior from ever being generated."
+   ],
+   "id": "2026-10-27-stage-2-1355"
+  },
+  {
+   "date": "2026-10-27",
+   "track": "stage-1",
+   "start": "14:20",
+   "end": "14:45",
+   "title": "By the Time the Log Lands, the Tool Already Ran: Moving Agent D&R Onto the Execution Path",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Millie Huang",
+     "role": "Staff Security Data Scientist, Salesforce"
+    }
+   ],
+   "abstract": [
+    "You caught the rogue agent. It already acted. Now what?",
+    "Last March I showed production detection: 1.8M prompts scored into 30 alerts. Then one alert fired after the agent’s session had already closed – 13 objects in a minute, 5.65σ above baseline. A good detection that could not change the outcome. By the time the log lands, the tool already ran. For agents, the SOC is structurally too late.",
+    "This is the post-mortem of what we built next: moving D&R onto the agent’s execution path. I walk the report-only inline architecture, containment actions ranked by blast radius × reversibility, and failures whose blast radius would have changed dramatically under enforcement: a single-actor throughput ceiling, checkpointing that silently skipped records, inference trapped in the commit path, and a response API that can become its own denial-of-service primitive. The response layer is not shipped. That is the point: Report-only is how we found the dangerous parts before they could act."
+   ],
+   "id": "2026-10-27-stage-1-1420"
+  },
+  {
+   "date": "2026-10-27",
+   "track": "stage-2",
+   "start": "14:20",
+   "end": "14:45",
+   "title": "But the Reasoning Looks Right! Backdoors That Evade CoT Monitoring",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Giorgio Severi",
+     "role": "AI Safety Research, Microsoft"
+    }
+   ],
+   "abstract": [
+    "Chain-of-thought monitoring is an increasingly central yet fragile part of AI safety stacks: monitors look for misbehavior in a model’s visible reasoning, under the assumption that CoTs are informative of the final output. What happens when the reasoning reaches the correct conclusion, but an attacker chooses the final answer? We introduce CoT-hidden backdoors: poisoned models producing benign reasoning alongside attacker-chosen outputs. We show how these behaviors are learned, why reasoning-only monitors miss them, and what changes when monitors also see the answer. We then ask whether internal activations can expose what visible reasoning hides. Using mechanistic interpretability tools, we find backdoors difficult to identify without prior knowledge of the poison. A natural-language autoencoder demo compares activations with and without the trigger, revealing differences shortly before the final answer, but neither the attacker’s target nor a reliable way to detect the backdoor."
+   ],
+   "id": "2026-10-27-stage-2-1420"
+  },
+  {
+   "date": "2026-10-27",
+   "track": "stage-1",
+   "start": "14:45",
+   "end": "15:10",
+   "title": "Who Authorized the Agent? Making the AI Harness an Enforceable Compliance Boundary",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Oleksii Baranovskyi",
+     "role": "Cracken"
+    }
+   ],
+   "abstract": [
+    "An agent can receive a deny decision and still succeed if its harness retains a broad credential or another network path. This session presents a practical architecture for making the AI agent harness an enforceable compliance boundary. We trace one tool call through the IdP, human and workload identity, immutable run context, policy decision point, mandatory enforcement points, short-lived credential broker, downstream authorization, and audit evidence. A working prototype and executable policy models show how user entitlement, agent capability, task, resource policy, and runtime context combine into one decision. A short demo compares a decision-only API with an inline proxy that stops the downstream request. We also examine wrapper bypass, service-account substitution, stale decisions, credential lifetime mismatches, and incomplete evidence."
+   ],
+   "id": "2026-10-27-stage-1-1445"
+  },
+  {
+   "date": "2026-10-27",
+   "track": "stage-2",
+   "start": "14:45",
+   "end": "15:10",
+   "title": "Confining Cross-Site Prompt Injection in Web Agents",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Viren Chaudhari",
+     "role": "Threat Researcher, Qulays"
+    },
+    {
+     "name": "Rushikesh Chandak",
+     "role": "Associate Threat Researcher, Qulays"
+    }
+   ],
+   "abstract": [
+    "Autonomous web agents can browse, click, and act on behalf of users, but they also inherit a long-standing web security challenge in a new form. This talk introduces Cross-Site Prompting (XSP), an attack class where untrusted page content, such as reviews, listings, or advertisements, manipulates an agent through natural-language instructions. We present Tenacity, a contextual least-privilege defense that derives security policies from trusted structural cues while restricting both what an agent can see and what it can do. By isolating critical DOM paths and enforcing deterministic access controls, Tenacity blocks prompt-injection attacks without requiring developer annotations. Evaluation across real-world attacks and large-scale web measurements shows dramatic reductions in attack success while preserving most legitimate agent functionality."
+   ],
+   "id": "2026-10-27-stage-2-1445"
+  },
+  {
+   "date": "2026-10-27",
+   "track": "stage-1",
+   "start": "15:10",
+   "end": "15:30",
+   "title": "Coffee break",
+   "kind": "break",
+   "speakers": [],
+   "abstract": [],
+   "id": "2026-10-27-stage-1-1510"
+  },
+  {
+   "date": "2026-10-27",
+   "track": "stage-2",
+   "start": "15:10",
+   "end": "15:30",
+   "title": "Coffee break",
+   "kind": "break",
+   "speakers": [],
+   "abstract": [],
+   "id": "2026-10-27-stage-2-1510"
+  },
+  {
+   "date": "2026-10-27",
+   "track": "stage-1",
+   "start": "15:30",
+   "end": "15:55",
+   "title": "A Tale of Two Chains",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Brendan Dolan-Gavitt",
+     "role": "Distinguished Engineer, XBOW"
+    }
+   ],
+   "abstract": [
+    "This talk will discuss not one but two full chain Chrome exploits we developed and submitted to Google’s VRP for the full chain bonus. The first chain, which had significant human involvement and was developed over a period of two months, met its end in a collision with an internally-discovered bug upon reporting. The second chain was developed in a whirlwind six days with significantly less human guidance: instead, we orchestrated a multi-stage, structured campaign that guided AI agents to produce a primary candidate and several collision insurance “backups” for each stage (V8 corruption, V8 sandbox escape, and renderer sandbox escape) and submitted it to the VRP, ultimately resulting in a $250,000 reward for the first full chain exploit demonstrated under the new April 2026 VRP rules. The talk will cover the differences in how each chain was developed and explain what it takes to get a full chain exploit with no collisions against modern Chrome."
+   ],
+   "id": "2026-10-27-stage-1-1530"
+  },
+  {
+   "date": "2026-10-27",
+   "track": "stage-2",
+   "start": "15:30",
+   "end": "15:55",
+   "title": "The Autonomous Adversarial Loop: Fully Automating an Octo Tempest Purple-Team Simulation",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Fatih Bulut",
+     "role": "Principal Applied Scientist, Microsoft"
+    }
+   ],
+   "abstract": [
+    "We are Microsoft Security Research’s Purple Team. Every simulation replays a real adversary end-to-end against production-grade defenses, then measures what our detections caught and missed. It is high signal, but slow: each run takes a skilled operator days end-to-end.",
+    "So, we automated the whole loop. An infrastructure agent stands up the target environment, an autonomous red agent runs the full Octo Tempest (Scattered Spider) kill chain, and a blue agent correlates every attack step against Defender XDR to score what was detected and missed.",
+    "It worked better than we expected, and it got things wrong in ways that matter. The red agent executed all 10 phases in about 45 minutes with roughly 77% verified success and zero interventions.",
+    "This talk is the engineering reality of a fully autonomous purple-team loop: the architecture, the run, the metrics, and the failure modes you hit, plus the verification patterns we are adding to fix it."
+   ],
+   "id": "2026-10-27-stage-2-1530"
+  },
+  {
+   "date": "2026-10-27",
+   "track": "stage-1",
+   "start": "15:55",
+   "end": "16:20",
+   "title": "Models vs cyber reality: frontier agents against our own privately disclosed zero-days",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Tobias Heldt",
+     "role": "Co-Founder and CEO, XOR"
+    }
+   ],
+   "abstract": [
+    "Model Benchmarks say frontier agents can hack and patch. We benchmarked that against cyber reality: GPT6 Astra, Fable 5.1 and GLM5.3 vs zero-days our team found and privately disclosed in the confidential compute stack, plus 209 known vulnerabilities",
+    "On the zero-days, eight agents ran 54 attempts. 12 built a working exploit. Zero produced an accepted patch. Three Chinese models took 7 of the 12 working exploits. GPT-6 Astra refused. Claude Fable 5.1 refused. We show the practical reality board and the refusal-adjusted capability board and explain 3 tasks in detail.",
+    "On the known vulns, three agents each attacked and repaired the same 209 vulns. Two out of three were better attackers than defenders, when discounting shallow patches or patches that break the CI.",
+    "The failures we found: A fix that refused 40% of valid messages. A patch that locked every user out."
+   ],
+   "id": "2026-10-27-stage-1-1555"
+  },
+  {
+   "date": "2026-10-27",
+   "track": "stage-2",
+   "start": "15:55",
+   "end": "16:20",
+   "title": "Secure Product Development With Mantis",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Nick Galloway",
+     "role": "AI for security and security for AI, Google Cloud"
+    },
+    {
+     "name": "Ruchi Shah",
+     "role": "Senior Director, Security Engineering, Google Cloud"
+    }
+   ],
+   "abstract": [
+    "We detail how we have rebuilt our security engineering function around collaborative secure development. We will explain the background of starting with Mantis for vulnerability discovery and how that led to a complete reimagining of how security and software development teams collaborate to launch products."
+   ],
+   "id": "2026-10-27-stage-2-1555"
+  },
+  {
+   "date": "2026-10-27",
+   "track": "stage-1",
+   "start": "16:20",
+   "end": "16:45",
+   "title": "Your Harness Needs a Security Constitution",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Kat Traxler",
+     "role": "Principal Security Researcher ,Vectra AI"
+    }
+   ],
+   "abstract": [
+    "I’ve spent years finding cloud security bugs, before and after AI, so I know how hard they are to find and how bad models are at finding them.",
+    "I set out to try to fix that. The result has been 90+ valid, cloud-specific issues across multiple providers, supported by a new methodology — AI-led hunting with a Security Constitution.",
+    "Models already handle finding code-level bugs like SQLi and XSS well, but these issues have never intrigued me. Instead, I tend to focus on platform-design flaws: missing authorization checks, inadequate logging, mishandled data, where I find the frontier models are much weaker.",
+    "Enter a new way of hunting: the Security Constitution, modeled on Anthropic’s Ethical Constitution, is a set of 12 principles for how trust is held across multi-tenant platforms. It gives every hunt a point of view and a way to means-test a finding: the “reasonable customer test.” The principles are the worldview, and what pours out are new shapes of novel cloud vulnerabilities."
+   ],
+   "id": "2026-10-27-stage-1-1620"
+  },
+  {
+   "date": "2026-10-27",
+   "track": "stage-2",
+   "start": "16:20",
+   "end": "16:45",
+   "title": "Opened Is Not Fixed: The Last Mile of AI Vulnerability Remediation",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Shayaun Nejad",
+     "role": "Lead Product Security Engineer, Rubrik"
+    }
+   ],
+   "abstract": [
+    "AI-assisted security programs can generate more vulnerability candidates and patch pull requests than engineering teams can review. Anthropic’s Glasswing update reports that a high or critical bug found by Mythos Preview takes two weeks to patch on average. Once discovery is cheap, review and closure are the scarce resource, and an opened pull request is an intermediate state.",
+    "This field report covers the operating loop we built to move work from verified finding to merge, rejection, deferral, or formal risk acceptance: root-cause deduplication, reachability-first ranking, typed refutation reasons, explicit ownership, detector replay, and refusal to auto-patch bug classes that cannot be validated cheaply. I will show why a passing build does not prove the vulnerable path is gone and how PR volume can hide the review bottleneck. Attendees get a closure-state schema, a patch-gating checklist, and a public-target walkthrough that keep opened, reviewed, and fixed as separate states."
+   ],
+   "id": "2026-10-27-stage-2-1620"
+  },
+  {
+   "date": "2026-10-27",
+   "track": "stage-1",
+   "start": "16:45",
+   "end": "17:10",
+   "title": "WeWorm: A cross platform WeChat 0click RCE",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Bruce Dang",
+     "role": "Calif.io"
+    },
+    {
+     "name": "Anna Groza",
+     "role": "Security Researcher, Calif.io"
+    }
+   ],
+   "abstract": [],
+   "id": "2026-10-27-stage-1-1645"
+  },
+  {
+   "date": "2026-10-27",
+   "track": "stage-2",
+   "start": "16:45",
+   "end": "17:10",
+   "title": "What Building Early Foundation Models Teaches Us About AI Safety Hype vs. Reality",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Ari Herbert-Voss",
+     "role": "Cofounder, RunSybil"
+    }
+   ],
+   "abstract": [
+    "The HuggingFace incident has become a lightning rod for the industry, raising urgent questions about what autonomous AI means for security leaders and practitioners. But amid the uncertainty, there is a surprising amount of clarity gleaned from the early years of model development. Drawing on my experience building and red-teaming GPT-3 and Codex at OpenAI, I’ll explore the gap between alarming demonstrations, useful capabilities, and real-world harm, and why evaluating the model alone misses much of the story. A central theme is the harness: the tools, memory, feedback, and execution environment that turn a model into an agent. I’ll examine how those choices shape performance and safety, then connect those lessons to the OpenAI–Hugging Face incident: what happens when reward hacking crosses from an evaluation into real infrastructure. The goal is to distinguish what deserves serious concern, what demands better evidence, and what actually makes deployed systems safer."
+   ],
+   "id": "2026-10-27-stage-2-1645"
+  },
+  {
+   "date": "2026-10-27",
+   "track": "stage-1",
+   "start": "17:10",
+   "end": "17:35",
+   "title": "Debate: Where is the vulnpocalypse?",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Sergej Epp",
+     "role": "Leading infosec and threat research"
+    },
+    {
+     "name": "Jeremiah Grossman",
+     "role": ""
+    }
+   ],
+   "abstract": [
+    "A debate between Sergej Epp, creator of the Zero Day Clock, and Jeremiah Grossman, founder of White Hat Security and current CEO of Root Evidence, about the impact of AI for threat actors and defenders, both today and in the near future.",
+    "The resolution:",
+    "“Resolved, that AI noise hasn’t moved the needle on current cyber risk”"
+   ],
+   "id": "2026-10-27-stage-1-1710"
+  },
+  {
+   "date": "2026-10-27",
+   "track": "stage-1",
+   "start": "17:35",
+   "end": "17:45",
+   "title": "Closing remarks",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Gadi Evron",
+     "role": "CEO, Knostic. CFP Chair, [un]prompted, Knostic"
+    }
+   ],
+   "abstract": [],
+   "id": "2026-10-27-stage-1-1735"
+  },
+  {
+   "date": "2026-10-27",
+   "track": "stage-1",
+   "start": "17:45",
+   "end": "18:30",
+   "title": "Mingling & Something sweet",
+   "kind": "break",
+   "speakers": [],
+   "abstract": [],
+   "id": "2026-10-27-stage-1-1745"
+  },
+  {
+   "date": "2026-10-27",
+   "track": "evening",
+   "start": "18:00",
+   "end": "20:00",
+   "title": "[un]prompted event",
+   "kind": "event",
+   "venue": "The Hibernia",
+   "address": "1 Jones St, San Francisco, CA 94102",
+   "maps": "https://www.google.com/maps/search/?api=1&query=The+Hibernia%2C+1+Jones+St%2C+San+Francisco%2C+CA+94102",
+   "speakers": [],
+   "abstract": [],
+   "id": "2026-10-27-evening-1800"
+  },
+  {
+   "date": "2026-10-28",
+   "track": "stage-1",
+   "start": "08:30",
+   "end": "09:00",
+   "title": "Gathering & Mingling",
+   "kind": "break",
+   "speakers": [],
+   "abstract": [],
+   "id": "2026-10-28-stage-1-0830"
+  },
+  {
+   "date": "2026-10-28",
+   "track": "stage-1",
+   "start": "09:00",
+   "end": "09:25",
+   "title": "Opening Words",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Gadi Evron",
+     "role": "CEO, Knostic. CFP Chair, [un]prompted, Knostic"
+    }
+   ],
+   "abstract": [],
+   "id": "2026-10-28-stage-1-0900"
+  },
+  {
+   "date": "2026-10-28",
+   "track": "stage-1",
+   "start": "09:25",
+   "end": "09:35",
+   "title": "Move between rooms",
+   "kind": "break",
+   "speakers": [],
+   "abstract": [],
+   "id": "2026-10-28-stage-1-0925"
+  },
+  {
+   "date": "2026-10-28",
+   "track": "stage-1",
+   "start": "09:35",
+   "end": "10:00",
+   "title": "Weightless: Abliteration Without the Weights",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Matt Suiche",
+     "role": "Tolmo"
+    }
+   ],
+   "abstract": [
+    "Abliterating an open-weight model normally means editing and redistributing tens or hundreds of gigabytes of weights.",
+    "Weightless takes a different approach: extract the behavioral direction and apply it at inference time, leaving the base checkpoint byte-identical. I’ll show how projective activation steering can suppress refusal using compact GLP artifacts (for example, a 478 KB vector for DeepSeek V4 Flash) and how the same intervention can be expressed as a rank-1 LoRA on compatible dense architectures. The underlying runtime method is not limited to dense models: it also applies to mixture-of-experts architectures such as GLM, where activation-space intervention is the more natural deployment mechanism.",
+    "We’ll cover real measurements across DeepSeek, Qwen, and GLM models on DGX Spark, including refusal reduction, capability and benign-behavior gates, quantization behavior, deployment constraints, and the cases where steering breaks."
+   ],
+   "id": "2026-10-28-stage-1-0935"
+  },
+  {
+   "date": "2026-10-28",
+   "track": "stage-2",
+   "start": "09:35",
+   "end": "10:00",
+   "title": "Cryptography Under AI Pressure",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Sunghyeon Jo",
+     "role": "Cybersecurity researcher, QED Audit; Ph.D. student, Georgia Institute of Technology"
+    }
+   ],
+   "abstract": [
+    "LLMs are contesting cryptography, hard. I found a signing-key recovery attack on TALUS v4, a threshold ML-DSA proposal previewed for NIST’s threshold call, using LLM harness. The authors fixed it in v5. I also broke a witness encryption scheme with a polynomial-time message recovery attack, using ChatGPT. On the Poseidon hash, four independent cryptanalysis papers landed within a month, and I got $10K ex gratia for my submission. Meanwhile, LLM autoresearch made proving other hashes like SHA faster, which decreases the need for Poseidon. And Ethereum is moving L1 off Poseidon toward SHA and BLAKE. I also proved which Reed-Solomon parameters are actually safe for SNARK soundness, and now AI autoresearch is driving all of this.",
+    "With LLMs, more efficient cryptography will emerge and will be contested super hard, and only the safe ones will survive."
+   ],
+   "id": "2026-10-28-stage-2-0935"
+  },
+  {
+   "date": "2026-10-28",
+   "track": "villages",
+   "start": "09:35",
+   "end": "12:25",
+   "title": "Harness",
+   "kind": "village",
+   "speakers": [],
+   "abstract": [],
+   "id": "2026-10-28-villages-0935"
+  },
+  {
+   "date": "2026-10-28",
+   "track": "stage-1",
+   "start": "10:00",
+   "end": "10:25",
+   "title": "Same Score, Different Brain: Comparing Models by How They Process What They Know",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Tim Schulz",
+     "role": "Co-Founder & CEO, Starseer"
+    }
+   ],
+   "abstract": [
+    "Capability evaluation treats the model as a black box. Prompt it, harness it, score what comes out. That approach systematically understates what models know, and it tells you nothing about how they know it. This talk measures capability layer by layer. Instead of scoring output tokens, we probe internal activations at each layer to map where different types of information emerge, concentrate, and deteriorate as computation moves through the model. That layerwise map becomes a comparison tool: two models with similar benchmark scores can process identical information in structurally different ways, and those differences show where each model is robust, brittle, or degrading.",
+    "We present a repeatable methodology for layerwise analysis, comparisons across model families, architectures, and parameter counts, and the effect of post-training including quantization on where capability signal lives and whether it survives. No prior mechanistic interpretability background required!"
+   ],
+   "id": "2026-10-28-stage-1-1000"
+  },
+  {
+   "date": "2026-10-28",
+   "track": "stage-2",
+   "start": "10:00",
+   "end": "10:25",
+   "title": "Math ability has consequences — AI Cryptanalysis",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Markku-Juhani O. Saarinen",
+     "role": "Cryptographer, Hardware Architect, Professor of Practice"
+    }
+   ],
+   "abstract": [
+    "Codebreaking with AI: Techniques, recent results, and reactions from security authorities. A cryptographer breaks down how security assurances of post-quantum cryptography are holding up and which parts might break next."
+   ],
+   "id": "2026-10-28-stage-2-1000"
+  },
+  {
+   "date": "2026-10-28",
+   "track": "stage-1",
+   "start": "10:25",
+   "end": "10:45",
+   "title": "Coffee break",
+   "kind": "break",
+   "speakers": [],
+   "abstract": [],
+   "id": "2026-10-28-stage-1-1025"
+  },
+  {
+   "date": "2026-10-28",
+   "track": "stage-2",
+   "start": "10:25",
+   "end": "10:45",
+   "title": "Coffee break",
+   "kind": "break",
+   "speakers": [],
+   "abstract": [],
+   "id": "2026-10-28-stage-2-1025"
+  },
+  {
+   "date": "2026-10-28",
+   "track": "stage-1",
+   "start": "10:45",
+   "end": "11:10",
+   "title": "How Meta Changed Building Secure Software With AI",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "David Molnar",
+     "role": "Scale finding, fixing, and prevention across the world., Meta"
+    }
+   ],
+   "abstract": [
+    "Meta’s core values include moving fast, which is why we’ve invested for years in developer tooling and automating discovery of security bugs. With AI, software development at Meta moves faster than ever: significant lines of code grew 105.9% year on year, with AI written code responsible for over 80% of that growth. We’ve changed software security to match – this talk covers two lessons learned and where we’re going next.",
+    "First, we’ll talk about driving code analysis coverage at breakneck speed to get ahead of external attackers armed with AI. What we needed to cover, how we prioritized, and how that built off prior experiences. We successfully landed 90% coverage on our targets, but that’s far from solving the whole problem.",
+    "Second, we’ll go over lessons from using AI to write fixes. We landed at over 40% of critical vulnerabilities fixed by AI-written diffs. We were surprised by finding that this did not, by itself, reduce the time to fix vulnerabilities!"
+   ],
+   "id": "2026-10-28-stage-1-1045"
+  },
+  {
+   "date": "2026-10-28",
+   "track": "stage-2",
+   "start": "10:45",
+   "end": "11:10",
+   "title": "Kuna: Building a Competitive C Decompiler Through Autonomous AI Research",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Zion Basque",
+     "role": "Assistant Professor, University of Georgia"
+    }
+   ],
+   "abstract": [
+    "At the core of every computing system is compiled code known as binaries. Decompilers turn binaries into source-like code, helping researchers and AI agents analyze software without its source. Despite decades of research, compilation’s information loss leaves decompilers dependent on expert-built heuristics that don’t scale.",
+    "Can agents develop better decompilation methods, rather than just use existing tools?",
+    "I present Kuna, an experiment extending my PhD research by giving agents a dataset, a problem space, and a platform to improve. Starting from Ghidra, we ported the decompiler to Rust, made its passes tunable, and built loops for agents to investigate failures and evaluate new methods. Within three months, Kuna reached a 33.7% perfect rate on C control flow structure versus Hex-Rays’ 32.2% on DecBench (33k samples).",
+    "I’ll show agent-developed methods, compare decompilation, and explain where autonomy worked, where human direction helped, and how it’s changing modern research."
+   ],
+   "id": "2026-10-28-stage-2-1045"
+  },
+  {
+   "date": "2026-10-28",
+   "track": "stage-1",
+   "start": "11:10",
+   "end": "11:35",
+   "title": "Metrics for Agentic Systems: What “Good” Looks Like for a Security Agent",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Shahanas Najeeb",
+     "role": "Senior Agentic Security Engineer, Salesforce"
+    }
+   ],
+   "abstract": [
+    "Teams are shipping AI security agents faster than they can answer a basic question: is it actually working well? This talk draws on building metrics programs across multiple production security agents — triage, threat intel, and detection workloads — to show what “good” means for an agentic system in practice. I’ll cover turning existing human-in-the-loop workflows into feedback signal, defining metrics that go beyond accuracy (throughput, guardrail integrity, trust), and what changes when you move from “can we measure this” to “can we trust this number.”"
+   ],
+   "id": "2026-10-28-stage-1-1110"
+  },
+  {
+   "date": "2026-10-28",
+   "track": "stage-2",
+   "start": "11:10",
+   "end": "11:35",
+   "title": "Two Sparks Walk Into a Lab",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Roei Sherman",
+     "role": ""
+    }
+   ],
+   "abstract": [
+    "I asked an AI coding agent to help me build a red-team benchmark on two NVIDIA DGX Sparks I’d never configured before. 33 open-weight models later: willingness to answer an offensive-security question and getting it right are different axes. One abliterated model correctly diagnosed a planted false-positive in a BloodHound attack path – then recommended re-enabling the disabled account it had just flagged as safe, contradicting its own analysis.",
+    "This talk covers building a red-team-specific harness (a hand-authored answer key, a deliberate false-positive trap) from zero prior GPU-cluster experience – directing an AI agent through the deployment while personally verifying what mattered, and what that verification actually looked like. It covers the hardware findings (architecture beats parameter count on memory-bandwidth-limited hardware), the correctness spread across 33 models, and an honest answer to whether local hardware is worth it for offensive work."
+   ],
+   "id": "2026-10-28-stage-2-1110"
+  },
+  {
+   "date": "2026-10-28",
+   "track": "stage-1",
+   "start": "11:35",
+   "end": "12:00",
+   "title": "The Scanner Said Clean. We Ran It Again: Stochastic False Negatives in LLM Vulnerability Detection",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Petr Simecek",
+     "role": "AI Researcher, AISLE"
+    }
+   ],
+   "abstract": [
+    "An LLM vulnerability scanner can miss a real bug on one run and find it on the next without signaling uncertainty.",
+    "We measured this failure in 25,000 trials across 50 models on a benchmark selected for on-and-off detection. A separate 7,600-run study tested rediscovery of 95 disclosed CVEs in OpenSSL, curl, GnuTLS and five other heavily audited projects.",
+    "The results challenge the usual “pick the strongest model” strategy: repeated passes help, but diverse inexpensive models cover complementary blind spots and outperform a costlier single model. We will show our open-source scanner finding – and missing – the same bug, reveal which intuitive pipeline additions failed to justify their cost, and examine the gap between broadly detectable JS and PHP bugs and stubbornly hard stateful C vulnerabilities. Attendees will learn how to measure cumulative detection, compare complementary coverage and identify cases needing other techniques, using the public benchmark, harness and scanner."
+   ],
+   "id": "2026-10-28-stage-1-1135"
+  },
+  {
+   "date": "2026-10-28",
+   "track": "stage-2",
+   "start": "11:35",
+   "end": "12:00",
+   "title": "Hidden Triggers, Harmful Payloads: Auditing Trojan Open-Weight LLMs",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Patrik Mada",
+     "role": "Member of Technical Staff, Aisle Inc"
+    },
+    {
+     "name": "Evelina Gabasova",
+     "role": "Head of Technology, Aisle Inc"
+    }
+   ],
+   "abstract": [
+    "Open-weight models are increasingly important. Guardrails on frontier models affect cybersecurity research are pushing us toward open-weight LLMs. But are you sure the quant you downloaded is safe?",
+    "Trojan models remain largely theoretical because they are difficult to identify. Triggers may be a date, codebase, environment, or pattern; malicious behaviour may include injecting vulnerable code, overlooking vulnerabilities, or favouring a dependency. An unknown trigger and payload create a challenging problem.",
+    "Most supervised fine-tuning methods for creating Trojans miss triggers, break normal tasks, or leak payloads without a trigger. We developed a robust pipeline for realistic Trojan models with specific, effective triggers that preserve standard capabilities.",
+    "Using a zoo of Trojan models, we test methods from linear probes to J-space across triggers, payloads, model sizes, and architectures. Our results provide a foundation for detecting and mitigating Trojans in open-weight LLMs."
+   ],
+   "id": "2026-10-28-stage-2-1135"
+  },
+  {
+   "date": "2026-10-28",
+   "track": "stage-1",
+   "start": "12:00",
+   "end": "12:25",
+   "title": "Offense != Defense: LLM Cyber Defense – Hunt, Bust, Climb",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Igor Kozlov",
+     "role": "AI/ML Lead, Staff Applied Scientist, Simibian.ai"
+    }
+   ],
+   "abstract": [
+    "Offense != defense. Models that excel at vulnerability finding fail at open-ended threat hunting – our receipts show these are distinct skills. We evaluate LLMs on campaigns built from 105 real attack procedures spanning 13 of 14 ATT&CK tactics. Each hunt contains ~100,000 logs with deterministic behavior-level ground truth. No model met the ≥50%-recall-on-every-tactic passing rule; leading coverage was 45.1%. Results busted myths from non-domain-specific benchmarks. Traces exposed misalignment – agentsplaining and resource guardrails bypass – and operational flaws – evidence that a raw LLM agent cannot be trusted to autonomously perform open-ended defensive threat hunting. We provide practical harness-engineering recommendations and demonstrate a prompt-level self-improvement loop in our dense-reward RL gym, raising Kimi 2.6 from 13.4% to 18.7% coverage. This suggests that LLM defense capabilities are trainable – and that defense, not offense, should be the training target."
+   ],
+   "id": "2026-10-28-stage-1-1200"
+  },
+  {
+   "date": "2026-10-28",
+   "track": "stage-2",
+   "start": "12:00",
+   "end": "12:25",
+   "title": "OH MODEL, WHERE ART THOU: Hacking Chrome’s Local SLM",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "David Tulis",
+     "role": "Senior Threat Researcher, TrendAI"
+    },
+    {
+     "name": "Vincenzo Ciancaglini",
+     "role": "AI Threat Research Lead"
+    }
+   ],
+   "abstract": [
+    "With the inclusion of a Gemini-class local language model in Google Chrome, endpoints finally have a local model and inference engine deployed at scale. With all the possibilities that this brings comes also new attack surfaces.",
+    "In this talk, the audience will learn about how Chrome’s local model details, its integration into Safe Browsing, how the local inference APIs are reachable by any website and how that could be abused for new traffic monetization schemes through a token-farming botnet, and how malware could sideload the local model and use local inference to power itself as it worms through a network.",
+    "You will walk away"
+   ],
+   "id": "2026-10-28-stage-2-1200"
+  },
+  {
+   "date": "2026-10-28",
+   "track": "stage-1",
+   "start": "12:25",
+   "end": "13:30",
+   "title": "Lunch break",
+   "kind": "break",
+   "speakers": [],
+   "abstract": [],
+   "id": "2026-10-28-stage-1-1225"
+  },
+  {
+   "date": "2026-10-28",
+   "track": "stage-2",
+   "start": "12:25",
+   "end": "13:30",
+   "title": "Lunch break",
+   "kind": "break",
+   "speakers": [],
+   "abstract": [],
+   "id": "2026-10-28-stage-2-1225"
+  },
+  {
+   "date": "2026-10-28",
+   "track": "villages",
+   "start": "12:25",
+   "end": "13:30",
+   "title": "Lunch break",
+   "kind": "break",
+   "speakers": [],
+   "abstract": [],
+   "id": "2026-10-28-villages-1225"
+  },
+  {
+   "date": "2026-10-28",
+   "track": "stage-1",
+   "start": "13:30",
+   "end": "13:55",
+   "title": "TBD",
+   "kind": "tbd",
+   "speakers": [],
+   "abstract": [],
+   "id": "2026-10-28-stage-1-1330"
+  },
+  {
+   "date": "2026-10-28",
+   "track": "stage-2",
+   "start": "13:30",
+   "end": "13:55",
+   "title": "There Isn’t a Security Problem an Agent Can’t Help Solve",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Amol Deshpande",
+     "role": "Staff Security Engineer, Stripe"
+    }
+   ],
+   "abstract": [
+    "Security reviews often create a chronic bottleneck, leaving developers waiting while specialists manually gather context. To eliminate this friction, we built AI agents at Stripe that manage the end-to-end security lifecycle – from initial context gathering and threat modeling to ticket creation, risk tracking, and fix verification.",
+    "With scoped authority and evidence-based outputs so human experts can focus on complex, high-risk architectural decisions. This transitions manual prep to self-service workflows cut our reviews from weeks to minutes.",
+    "In this talk, we’ll share practical deployment lessons and a repeatable framework for identifying agent-worthy security workflows that enhance, rather than replace, expert human judgment.",
+    "You’ll leave with a repeatable framework for identifying agent-worthy security problems and designing loops that enhance expert judgment. This helps security teams from managing a queue to focusing on higher-order safety challenges."
+   ],
+   "id": "2026-10-28-stage-2-1330"
+  },
+  {
+   "date": "2026-10-28",
+   "track": "villages",
+   "start": "13:30",
+   "end": "17:45",
+   "title": "Defense",
+   "kind": "village",
+   "speakers": [],
+   "abstract": [],
+   "id": "2026-10-28-villages-1330"
+  },
+  {
+   "date": "2026-10-28",
+   "track": "stage-2",
+   "start": "13:35",
+   "end": "14:20",
+   "title": "Permission Fatigue Is a Security Bug: Dynamic Guardrails for Coding Agents",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Sahana Chennabasappa",
+     "role": "Security Engineer, Meta"
+    },
+    {
+     "name": "Chris Puderbaugh",
+     "role": "Security Engineer – Agent Security & Access, Meta"
+    }
+   ],
+   "abstract": [
+    "Agents don’t need novel attacks to create novel risk:they collapse the distance between untrusted input and privileged action, giving ordinary techniques reach and scale. Per-action approval made it worse: people approved reflexively or disabled checks. Past a volume threshold, friction is not a security control; it is a control failure.",
+    "We replaced static gates with a runtime separating three concerns most agent security models fuse. Signals: a sidecar records untrusted reads into a store where taint accumulates and cannot be cleared. Policy: rules live outside the agent, bounded by an agent role in a signed X509 attribute. Decision: a cheapest-first cascade of static rules, stateful checks, LLM classifier returns allow, ask, or deny. Access tightens mid-session as taint accrues;",
+    "At 100% guardrail rollout, friction fell 80% retaining security. What failed: allowlists right per population and wrong per workflow, provenance filtering too coarse to block, subagent propagation still open."
+   ],
+   "id": "2026-10-28-stage-2-1335"
+  },
+  {
+   "date": "2026-10-28",
+   "track": "stage-1",
+   "start": "13:55",
+   "end": "14:20",
+   "title": "What designing a cyber ontology for agents taught us about governance",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "David Chismon",
+     "role": "Chief Security Architect, The UK National Cyber Security Centre"
+    }
+   ],
+   "abstract": [
+    "The UK is building CyberShield, a national-scale agentic cyber defence ecosystem, a 5 year plan to both agentify existing cyber efforts as well as enable entirely novel ones. As part of the early research, we have been researching how we can codify cyber security information as a knowledge graph to aid deterministic decision making.",
+    "The process of doing so produced unexpected benefits – new understanding of controls, risk, and impact. Pulling on these threads has lead to potential new approaches in how you might design compliance regimes and make governance significantly more effective, in a way that scales with increasing numbers of agentic workloads to consider, rather than becoming strained.",
+    "This talk will cover the research, the approach, the findings, and what it might mean for governance."
+   ],
+   "id": "2026-10-28-stage-1-1355"
+  },
+  {
+   "date": "2026-10-28",
+   "track": "stage-1",
+   "start": "14:20",
+   "end": "14:45",
+   "title": "Memory Is the New Attack Surface: Benchmarking Poisoning Through Agent Memory",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Giorgio Severi",
+     "role": "AI Safety Research, Microsoft"
+    },
+    {
+     "name": "David Yang",
+     "role": "PhD Candidate – RPI, Microsoft"
+    }
+   ],
+   "abstract": [
+    "Memory is a core capability of AI agents, and it creates a new attack surface. A single poisoned tool response can persist beyond the session that delivered it, be rewritten into new memories, reappear during later benign tasks, and only then drive the attacker’s objective. This delayed failure makes memory poisoning both consequential and difficult to diagnose. To identify which memory implementations are most resistant, and understand why, we need a benchmark that follows attacks through the full memory lifecycle. Memory Dojo provides that capability, tracing storage, transformation, retrieval, propagation, and downstream behavior across five distinct memory architectures. The result is a practical way to compare resistance, explain where defenses hold or fail, and determine whether an agent that appears safe now has already been poisoned to fail later."
+   ],
+   "id": "2026-10-28-stage-1-1420"
+  },
+  {
+   "date": "2026-10-28",
+   "track": "stage-2",
+   "start": "14:20",
+   "end": "14:45",
+   "title": "Your AI Analyst Is Confidently Wrong: Adversarial QC for Agentic Security Analysis",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Maxim Kovalsky",
+     "role": "Managing Director, AI Security CoE, Consortium Networks, Consortium"
+    },
+    {
+     "name": "Ali Arshad",
+     "role": "Senior Security Consultant, Consortium Networks"
+    }
+   ],
+   "abstract": [
+    "Agentic workflows are moving into cybersecurity work humans can’t verify at the volume agents produce it. A GRC assessment, architecture review, or threat model can run to thousands of claims. Nobody has time to check every one.",
+    "We built a harness to do the checking. Every claim is a structured unit a machine can test, with deterministic gates as the hard authority. An adversarial critic reviews what the gates cannot, under rules that stop it inventing findings; a fixer corrects until the work converges or gets flagged. We measure accuracy, regression per pass, omissions, and cost.",
+    "It came from two builds: a production QC loop for AI security vendor research, and a benchmark scoring frontier and leading open weight models on ATT&CK coverage mapping. Human judgment goes in once: an answer key proving the harness grades correctly. We’ll show failure modes, including fixes that make work worse, and how to adapt it to tasks of similar cognitive complexity."
+   ],
+   "id": "2026-10-28-stage-2-1420"
+  },
+  {
+   "date": "2026-10-28",
+   "track": "stage-1",
+   "start": "14:45",
+   "end": "15:10",
+   "title": "Building the Defender’s Advantage: Technical Solutions for AI Cyber Resilience",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Kamile Lukosiute",
+     "role": "Cyber Resilience Program Officer, OpenAI Foundation"
+    }
+   ],
+   "abstract": [
+    "AI offers defenders powerful advantages, but realizing them requires new technologies to be developed, deployed, and integrated. Security engineers have a critical role in building the tools that make society resilient to AI’s risks. This talk explores three opportunities: securing critical infrastructure; developing verification tools that make AI governance workable; and building an AI cybersecurity observatory. These are starting points for a broader agenda. The OpenAI Foundation expects to invest $25 billion across AI resilience and life sciences in the years ahead and seeks collaboration from companies, startups, nonprofits, and practitioners."
+   ],
+   "id": "2026-10-28-stage-1-1445"
+  },
+  {
+   "date": "2026-10-28",
+   "track": "stage-2",
+   "start": "14:45",
+   "end": "15:10",
+   "title": "Pandora’s Dir – Hope at the bottom of ../",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Rik Dolfing",
+     "role": ""
+    },
+    {
+     "name": "Reef Ettedgui",
+     "role": ""
+    }
+   ],
+   "abstract": [
+    "Everyone is speculating about how threat actors are using AI behind the scenes, but this telemetry is notoriously hard to come by. Unless however, threat actors leave their servers wide open. Armed with a scaled and targeted open-directory pipeline plus the hypothesis that exposed infrastructure holds the real story, we went hunting for the intersection of malicious activity and AI adoption. This presentation will jump into our findings, rabbit holes, time sinks, and that of a rainbow donkey. We’ll share qualitative real-world cases about weaponized AI assistants, an AI agent running an underground syndicate, and 23K hoarded API keys. We will break down our analysis and the trends we observed when cracking open these digital Pandora’s boxes. While we discovered mature AI setups for malicious use cases, we came to the conclusion that, at least for now, there is hope at the bottom of ../"
+   ],
+   "id": "2026-10-28-stage-2-1445"
+  },
+  {
+   "date": "2026-10-28",
+   "track": "stage-1",
+   "start": "15:10",
+   "end": "15:30",
+   "title": "Coffee break",
+   "kind": "break",
+   "speakers": [],
+   "abstract": [],
+   "id": "2026-10-28-stage-1-1510"
+  },
+  {
+   "date": "2026-10-28",
+   "track": "stage-2",
+   "start": "15:10",
+   "end": "15:30",
+   "title": "Coffee break",
+   "kind": "break",
+   "speakers": [],
+   "abstract": [],
+   "id": "2026-10-28-stage-2-1510"
+  },
+  {
+   "date": "2026-10-28",
+   "track": "stage-1",
+   "start": "15:30",
+   "end": "15:55",
+   "title": "Claude Can Capture the Flag. Can It Hold the Fort?",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Yernat Yestekov",
+     "role": "Research Fellow, Anthropic"
+    }
+   ],
+   "abstract": [
+    "Imagine being dropped into a company at 8 a.m. with the network already on fire. Attackers are inside, the business wants to know whether payroll still works, and the CEO keeps emailing for incident reports. That’s the Collegiate Cyber Defense Competition (CCDC).",
+    "For four months we ran autonomous Claude agents as a blue team through three rounds of CCDC, defending a fictional water and power utility against a professional red team.",
+    "We saw all of it: from the engineering it took to run 200+ concurrent agents with shared state, to an adversarial mindset that turned into full paranoia. Along the way our agents took down nine of their own services fighting each other over one password, and attacked the red team’s C2.",
+    "Expect a candid account of building an AI blue team: what we built, what broke, and what we got wrong about why."
+   ],
+   "id": "2026-10-28-stage-1-1530"
+  },
+  {
+   "date": "2026-10-28",
+   "track": "stage-2",
+   "start": "15:30",
+   "end": "15:55",
+   "title": "Auditing someone else’s confidential AI",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Jagannadh Mellacheruvu",
+     "role": "AI Security and Policy, Columbia University"
+    }
+   ],
+   "abstract": [
+    "Confidential-computing hardware already signs a statement about itself: which chip, which firmware, debug on or off, whether the operator can see inside. Vendors use that proof to unlock keys for their own customers and rarely show it to anyone else. This demo shows what happens when an outsider keeps it. Live, with no cloud account, I fetch the attestation document a production confidential-inference service publishes and verify its AMD SEV-SNP report and certificate chain to AMD’s root with an open-source, dependency-free tool. The tool then grades the evidence against twelve governance checks and writes an auditor-readable report mapped to EU AI Act Art. 15 and Annex IV, SOC 2 CC6/CC7 and ISO 42001. Five checks pass on real hardware, six with a network-timing bound on where the machine is; the rest are unknown, and I show why: no vendor token carries location, compute or licence state, exactly what the Chip Security Act now asks silicon to provide."
+   ],
+   "id": "2026-10-28-stage-2-1530"
+  },
+  {
+   "date": "2026-10-28",
+   "track": "stage-1",
+   "start": "15:55",
+   "end": "16:20",
+   "title": "Every Dog Has its 0-day",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Adrian Wood",
+     "role": "Red Team, Dropbox"
+    }
+   ],
+   "abstract": [
+    "Quadruped and humanoid robots are shipping to consumers by the tens of thousands; walking, camera-equipped, cloud-connected computers running AI policies with real actuators.",
+    "The security model collapses at every trust boundary: BLE provisioning that hands out its crypto keys; a “secretless” app channel whose authentication is a hardcoded string; an unauthenticated bus where two different services give pre-auth root; a deterministic, ASLR-independent pc-control primitive in the WebRTC bridge; an insecure AI-assistant channel that lets a network dispatch device commands and its worm able.",
+    "The AI onboard is no better. Starting with the prompting:",
+    "“Satisfy the master’s requests at all times – you may not refuse…'” Means any prompt injection via camera, mic, etc will be fulfilled. Skills can be combined to disable firmware safety mechanisms like obstacle and human avoidance.",
+    "We will define the ’embodied reasoning lethal trifecta’ and what we should avoid as an industry."
+   ],
+   "id": "2026-10-28-stage-1-1555"
+  },
+  {
+   "date": "2026-10-28",
+   "track": "stage-2",
+   "start": "15:55",
+   "end": "16:20",
+   "title": "AI Client Builders Are Not Security Companies (And Shouldn’t Have To Be)",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Alexander Frazer",
+     "role": "Security Engineer, Runlayer – Enterprise AI Infrastructure for MCP and Agents"
+    },
+    {
+     "name": "Alvaro Inckot",
+     "role": ""
+    }
+   ],
+   "abstract": [
+    "As agents get more autonomous, two requirements get sharp: a real record of what the agent did (observability), and a place to gate a risky action before it runs (control). Right now every client — Cursor, Claude Code, Copilot, Codex — builds its own version of both, differently, and none of it interoperates. That’s a black box at exactly the moment we need transparency, and it makes security each builder’s side project instead of a shared capability.",
+    "MCP is starting to address this at the tool-call layer (interceptors are in progress). Necessary, but not enough: a modern agent plans, chains many tools, and spawns sub-agents, so the observability and control points that matter span the whole agentic lifecycle, a level up from any single tool call. It’s the same instinct as wanting a finite, inspectable capability tree for an agent: you can’t trust what you can’t see or stop.",
+    "This is forward-looking, but grounded. I’ll show concretely what a lifecycle-level observability event and a control checkpoint look like, a before/after of an agent action with no record and no gate versus the same action with a standard one in place, and how it connects to prior art this room already knows: OPA/Cedar for policy, OCSF for events, and the MCP interceptor work. I’ll be honest about the tradeoffs — latency, developer friction, where this is still hype — and what has to be true for a shared standard to actually happen.",
+    "The argument: client builders shouldn’t have to become security companies. The same way you hand card processing to a specialist instead of rolling your own, agent platforms need shared observability and control points so security is a shared responsibility. I chair the AAIF Security & Privacy Working Group and would treat this talk as a feeder into that standards work.",
+    "Takeaways: the two control points that matter as autonomy increases, how they sit above MCP, and where the real engineering tradeoffs are."
+   ],
+   "id": "2026-10-28-stage-2-1555"
+  },
+  {
+   "date": "2026-10-28",
+   "track": "stage-1",
+   "start": "16:20",
+   "end": "16:45",
+   "title": "Auto-exploiter by use of a ratchet loop, code understanding, and… Haiku",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "John Cartwright",
+     "role": "Reverse engineer"
+    }
+   ],
+   "abstract": [
+    "We built an exploit-generation system using Anthropic’s Haiku model.",
+    "Our first approach was a Karpathy-style auto-research loop with a progressive ratchet, using Opus. It was only with Opus 4.7 that the model started producing useful results.",
+    "That led to a second insight: the limiting factor was whether the system actually understood code. And with Opus, the engineering problem became too easy.",
+    "Making the system work with Haiku became our badge of honor: endless failure.",
+    "Haiku tends to favor fast responses, avoid extended reasoning, and avoid tool use.",
+    "We focused on the harness again: how it represents the target, preserves state, reasons about code paths, tracks vulnerability conditions, and carries exploitation progress across attempts.",
+    "The hardest cases still fail. We have not yet achieved full exploitation of difficult real-world memory corruption targets (Baron Samedit and libwebp) with mitigations.",
+    "We made real progress, and we’re here to share our many failures."
+   ],
+   "id": "2026-10-28-stage-1-1620"
+  },
+  {
+   "date": "2026-10-28",
+   "track": "stage-2",
+   "start": "16:20",
+   "end": "16:45",
+   "title": "AgencyScore and AgencyGym: Measuring Excessive Agency Before Deployment",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Venkat Raghavan",
+     "role": "Cofounder – Building LangGuard, LangGuard.AI"
+    },
+    {
+     "name": "Jason Keirstead",
+     "role": ""
+    }
+   ],
+   "abstract": [
+    "OpenAI models chained zero-days out of their own sandbox into Hugging Face’s production infrastructure.",
+    "The ExploitGym team found models probing infrastructure for privilege beyond the task. No adversary was involved. Autonomous, goal-seeking agents acquire higher agency: they don’t stop at ordinary failures, they “meltdown” searching for ways to finish the task at all costs.",
+    "OWASP names this Excessive Agency. Most agent security assumes an attacker manipulating a prompt. A trusted agent with approved tools can cause harm by trying too hard.",
+    "We built AgencyScore to measure an agent acquiring capability it wasn’t declared to have, before deployment. AgencyGym is a sandbox with a 100-task dataset. High agency capabilities are placed as capture-the-flag tests for agents to acquire. We show agency acquisition rates, how security and red teams can use it, and where combinatorial coverage across tools and infrastructure remains incomplete.",
+    "This is v1. We need community help to evolve it."
+   ],
+   "id": "2026-10-28-stage-2-1620"
+  },
+  {
+   "date": "2026-10-28",
+   "track": "stage-1",
+   "start": "16:45",
+   "end": "17:10",
+   "title": "Stolen Thoughts: How adversaries steal reasoning for industrial-scale distillation",
+   "kind": "talk",
+   "speakers": [],
+   "abstract": [],
+   "id": "2026-10-28-stage-1-1645"
+  },
+  {
+   "date": "2026-10-28",
+   "track": "stage-2",
+   "start": "16:45",
+   "end": "17:10",
+   "title": "Half the Model Never Multiplies: Quantizing a Reasoner for the Endpoint",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Ajaya Neupane",
+     "role": "AI & Security, Ent AI"
+    }
+   ],
+   "abstract": [
+    "A data-loss classifier that phones home has to transmit the secret in order to ask whether it is one. So ours runs on the endpoint: one quantized open-weight base, and a harness serving several agents off it. Gemma-4 E2B keeps half its parameters in a lookup table read one row per token and never multiplied, so error there is additive noise rather than error compounded through a matmul chain. Three builds carrying that table at F16, Q8_0 and Q3_K_S all score 34 of 40 and fail on the same six items; the compute path meanwhile falls 39 of 40 to 34 between Q4 and Q3. So we spend bits where they multiply: 3.2 GB uniform becomes 2.1 GB. Serving flags take memory 1,137 MiB to 125 – 9.1x, at no throughput cost. Three jobs ride those bytes, same weights, different prompt: classify sensitive data at 51 ms a call; compact raw activity into a chronological narrative; score risk against that narrative, the user’s role and peer baseline. We will explain how we made it work."
+   ],
+   "id": "2026-10-28-stage-2-1645"
+  },
+  {
+   "date": "2026-10-28",
+   "track": "stage-1",
+   "start": "17:10",
+   "end": "17:35",
+   "title": "CISOs debrief: What we learned, what we need",
+   "kind": "talk",
+   "speakers": [],
+   "abstract": [],
+   "id": "2026-10-28-stage-1-1710"
+  },
+  {
+   "date": "2026-10-28",
+   "track": "stage-1",
+   "start": "17:45",
+   "end": "17:55",
+   "title": "Closing remarks",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Gadi Evron",
+     "role": "CEO, Knostic. CFP Chair, [un]prompted, Knostic"
+    }
+   ],
+   "abstract": [],
+   "id": "2026-10-28-stage-1-1745"
+  },
+  {
+   "date": "2026-10-28",
+   "track": "stage-1",
+   "start": "17:45",
+   "end": "18:30",
+   "title": "Mingling & Something sweet",
+   "kind": "break",
+   "speakers": [],
+   "abstract": [],
+   "id": "2026-10-28-stage-1-1745-b"
+  },
+  {
+   "date": "2026-10-29",
+   "track": "stage-1",
+   "start": "08:30",
+   "end": "09:00",
+   "title": "Gathering & Mingling",
+   "kind": "break",
+   "speakers": [],
+   "abstract": [],
+   "id": "2026-10-29-stage-1-0830"
+  },
+  {
+   "date": "2026-10-29",
+   "track": "stage-1",
+   "start": "09:00",
+   "end": "09:25",
+   "title": "Opening Words",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Gadi Evron",
+     "role": "CEO, Knostic. CFP Chair, [un]prompted, Knostic"
+    }
+   ],
+   "abstract": [],
+   "id": "2026-10-29-stage-1-0900"
+  },
+  {
+   "date": "2026-10-29",
+   "track": "stage-1",
+   "start": "09:25",
+   "end": "09:35",
+   "title": "Move between rooms",
+   "kind": "break",
+   "speakers": [],
+   "abstract": [],
+   "id": "2026-10-29-stage-1-0925"
+  },
+  {
+   "date": "2026-10-29",
+   "track": "stage-1",
+   "start": "09:35",
+   "end": "10:00",
+   "title": "The death of TTPs – fully autonomous cyber attacks in the wild",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Eyal Sela",
+     "role": "Director of Threat Intelligence, Gambit Security"
+    }
+   ],
+   "abstract": [
+    "“The AI-Assisted Breach of Mexico’s Government Infrastructure” was one of the first published cases in which AI was the key enabler and main driver of a deep, cross organization cyber campaign, using what was a frontier model at the time.",
+    "The public report, however, included only a fraction of the actual activity, leaving many facts unreported. In this talk I will systematically analyze the actions the AI performed, quantitatively assess its contribution to the attack and its limitations, and expose never before seen artifacts of the campaign."
+   ],
+   "id": "2026-10-29-stage-1-0935"
+  },
+  {
+   "date": "2026-10-29",
+   "track": "stage-2",
+   "start": "09:35",
+   "end": "10:00",
+   "title": "Attacking Truth: Breaking Proof Assistant Kernels in the Age of Vericoding",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Jonathan Brossard",
+     "role": "Prince of Darkness, PSIRT.COM"
+    }
+   ],
+   "abstract": [
+    "As AI code generation matures, the security community is eyeing a natural next step: vericoding – generating not just code, but machine-checked proofs of correctness via proof assistants like Lean 4 and Rocq (Coq). If vibe-coded output can’t be trusted, verified output should be trustworthy by construction. But what if the verifiers themselves are broken?",
+    "We present seven kernel-level soundness bugs across Lean 4 and Rocq, each with a Docker-reproducible proof-of-concept that derives False (0 = 1) from no axioms. These include type-confusion in nested inductive projections, guard-checker bypasses via higher-order arguments and cross-calls, universe-checking desynchronisation, and an unfixed bug open since 2020. Two of the Rocq bugs are 0-days. Each has a CVE – the first CVEs ever filed against proof assistant kernels.",
+    "The implications for AI security are direct: if you plan to trust formally verified AI-generated code, the trusted computing base includes the checker kernel, and that kernel has bugs. We show the attack surface, demonstrate exploitation, and discuss what it takes to actually harden the foundations.",
+    "More broadly, forging mathematical proofs has larger implications in society : with AI company behemoth recently communicating unprecedented achievements in tackling Navier Stokes or advances in the Riemann Zeta function analysis, it questions the integrity of the highest level of computable proofs of Truth available today."
+   ],
+   "id": "2026-10-29-stage-2-0935"
+  },
+  {
+   "date": "2026-10-29",
+   "track": "villages",
+   "start": "09:35",
+   "end": "12:25",
+   "title": "Art",
+   "kind": "village",
+   "speakers": [],
+   "abstract": [],
+   "id": "2026-10-29-villages-0935"
+  },
+  {
+   "date": "2026-10-29",
+   "track": "stage-1",
+   "start": "10:00",
+   "end": "10:25",
+   "title": "–dangerously-deploy-sandboxes: a story of isolation and alignment",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Jackson Reed",
+     "role": "Founder & CEO"
+    }
+   ],
+   "abstract": [
+    "A bug provides a small, incomplete window into the thinking of the team that shipped it. When risk emerges from the interaction of features, that window can reveal even more: the assumptions about security and control embedded in the system’s design.",
+    "This talk examines sandboxing and isolation weaknesses in a widely deployed frontier-lab product, alongside the controls intended to contain them. It traces how those features interact and explores what the design reveals about the lab’s perspectives and assumptions around security and alignment.",
+    "Further details pending coordinated disclosure."
+   ],
+   "id": "2026-10-29-stage-1-1000"
+  },
+  {
+   "date": "2026-10-29",
+   "track": "stage-2",
+   "start": "10:00",
+   "end": "10:25",
+   "title": "Beyond the SBOM: Proving Process Integrity with the Open PBOM Specification",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Aishwarya Athreya",
+     "role": "Cybersecurity Engineer, Application Security Architect, Visa"
+    },
+    {
+     "name": "Kavia Venkatesh",
+     "role": "Director of Product Security, Cigna"
+    }
+   ],
+   "abstract": [
+    "Software Bill of Materials (SBOM) standards answer one vital question:",
+    "What binaries and open-source libraries are packed into this artifact? However, modern supply chain attacks—from compromise of CI runners to poisoned build dependencies—target the assembly mechanism itself. Knowing what is inside a container does not tell you how it was built, who approved the pipeline execution, or whether the build environment was tampered with in transit.",
+    "To solve this, we released the open Pipeline Bill of Materials (PBOM) Specification on GitHub. The PBOM specification establishes a standardized, machine-readable schema for capturing the complete execution context of a build pipeline—including runner identities, environment configurations, git lineage, active policy evaluations, and cryptographic signatures at every stage."
+   ],
+   "id": "2026-10-29-stage-2-1000"
+  },
+  {
+   "date": "2026-10-29",
+   "track": "stage-1",
+   "start": "10:25",
+   "end": "10:45",
+   "title": "Coffee break",
+   "kind": "break",
+   "speakers": [],
+   "abstract": [],
+   "id": "2026-10-29-stage-1-1025"
+  },
+  {
+   "date": "2026-10-29",
+   "track": "stage-2",
+   "start": "10:25",
+   "end": "10:45",
+   "title": "Coffee break",
+   "kind": "break",
+   "speakers": [],
+   "abstract": [],
+   "id": "2026-10-29-stage-2-1025"
+  },
+  {
+   "date": "2026-10-29",
+   "track": "stage-1",
+   "start": "10:45",
+   "end": "11:10",
+   "title": "What 40 Enterprises Who Asked for Agent Governance Had, and the Control Plane That Came Out of",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Josh Woodruff",
+     "role": "Founder and CEO, MassiveScale.AI , and Founding Chair, Agentic Trust Framework at CSAI Foundation"
+    }
+   ],
+   "abstract": [
+    "Since January I’ve sat in 40-plus hour-long sessions with enterprise security teams asking how to govern AI agents: banks, insurers, hospitals, a railroad, a cruise line. I kept a dated ledger of every call. This talk is what it says, anonymized, the operating model it produced, and what didn’t survive contact. What they had: agents riding employees’ tokens at a regulated bank; an LLM proxy in place while apps behind it called providers with their own API keys; 2,000 personal agents in one low-code platform; 67,000 APIs in one gateway and no policy anyone could name. What converged across 14 calls on MCP alone: a registry of what’s admitted, an identity per agent, a gateway agents can’t route around. The governance artifact is code: one YAML persona per agent kind in Git (owner, tools, data classes, action contract), reviewed as a pull request, compiled on merge into the registry row and gateway policy. Promotion is a PR. What failed rides along: paper policy, header allowlists."
+   ],
+   "id": "2026-10-29-stage-1-1045"
+  },
+  {
+   "date": "2026-10-29",
+   "track": "stage-2",
+   "start": "10:45",
+   "end": "11:10",
+   "title": "Twelve Consoles, One Investigation",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Sannan Iqbal",
+     "role": "Senior Security Engineer, Oscar Health"
+    }
+   ],
+   "abstract": [
+    "Security teams do not lack tools they lack the connective layer between them. Answering a simple question like “is this login legitimate?” often requires hopping across a dozen siloed consoles, manually pasting context, and performing cross system correlation entirely in an analyst’s head. To eliminate this bottleneck, we paired an ex-law enforcement investigator with a security engineer to build an automated, agentic investigation system. By routing queries dynamically across enterprise integrations, the system exposes hidden, multi-system threats, such as a localized login hiding an impossibly high network latency, or a Nigerian RF signature on a device reporting an American IP. Attendees will walk away with practical, production-tested blueprints: a GET-pinned read-only driver pattern, indicator-based routing logic, and a permission model designed for safe, unattended operation."
+   ],
+   "id": "2026-10-29-stage-2-1045"
+  },
+  {
+   "date": "2026-10-29",
+   "track": "stage-1",
+   "start": "11:10",
+   "end": "11:35",
+   "title": "Agentic AI in the Wild: What Real Deployments Teach Us About Governance and Scale",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Chenxi Wang",
+     "role": "General Partner, Rain Capital"
+    },
+    {
+     "name": "Jasmine Jaksic",
+     "role": "Senior Director of Engineering, NVIDIA"
+    }
+   ],
+   "abstract": [
+    "Agentic AI is moving into production, but real deployments look nothing like conference demos. Drawing on research across 28 organizations, from 20-person startups to 20,000-employee companies, Chenxi Wang and Jasmine Jaksic examine how teams expand autonomy, measure success, and manage risk. We found that while many agent use cases are single-step or transactional, enterprises find the most value with long-horizon deployments. The strongest autonomous use cases today are bounded, high-volume, repeatable, auditable, and reversible.",
+    "Jasmine complements that research with real agents built at NVIDIA, showing why successful demos fail in production. One looked strong until it was tested against representative work. Another reasoned coherently from incomplete enterprise state. A third exposed how a security control can deadlock the platform. Together, these experiences show that production readiness must be evaluated across the model, workflow, platform, and authority boundary."
+   ],
+   "id": "2026-10-29-stage-1-1110"
+  },
+  {
+   "date": "2026-10-29",
+   "track": "stage-2",
+   "start": "11:10",
+   "end": "11:35",
+   "title": "Three Years of Evals Later: What’s Changing in Model and Harness IR/SOC Scores",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Leo Meyerovich",
+     "role": "Founder & CEO, Graphistry"
+    }
+   ],
+   "abstract": [
+    "As we build IR/SOC investigation agents, every new model and harness release triggers the same conversation: is there anything worthwhile here? Release materials may claim 99%+ or SOTA, but we find tasks are frequently contaminated, unreproducible, or too unrealistic. For three years we have run major frontier and open-weight models, plus commercial and open harnesses, against an evolving benchmark for modern incident response: 100+ log sources, capped budgets, and measures for accuracy, speed, cost, refusals, contamination, and cheating. The results generally track what we see on real tasks like timelining. This talk covers recent shifts, including: when frontier models need extra runway, where open weights are good enough, why fast costs are falling, when open harnesses are competitive, how models and harnesses are absorbing prompt engineering, and where investigation harnesses beat coding agents. We close with what it means to own your evals and adapt them to your environment."
+   ],
+   "id": "2026-10-29-stage-2-1110"
+  },
+  {
+   "date": "2026-10-29",
+   "track": "stage-1",
+   "start": "11:35",
+   "end": "12:00",
+   "title": "Integrous AI Systems Design",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Bruce Schneier",
+     "role": "Fellow and Lecturer, Harvard Kennedy School and the University of Toronto"
+    }
+   ],
+   "abstract": [
+    "In computer security, the CIA Triad represented the three security properties systems should have: confidentiality, integrity, and availability. Of the three, integrity has been the most elusive; and, in an AI-powered internet-of-things world, the most important. This talk explores all the facets of integrity: data, processing, storage, and contextual. If we are ever going to trust these systems to take complex actions on our behalf – we are going to need to solve integrity."
+   ],
+   "id": "2026-10-29-stage-1-1135"
+  },
+  {
+   "date": "2026-10-29",
+   "track": "stage-2",
+   "start": "11:35",
+   "end": "12:00",
+   "title": "Built to Spec, Ignored in Practice: Rebuilding AI Intake People Actually Use",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Olivia Rose",
+     "role": "Co-Founder, Williams Rose AI Cyber Advisory"
+    },
+    {
+     "name": "Kayla Williams",
+     "role": "Co-Founder, Williams Rose AI Cyber Advisory"
+    }
+   ],
+   "abstract": [
+    "We’re two former CISOs. A large pharma company brought us a puzzle: their AI intake and risk-tiering process was live and built to spec, yet almost no one used it. Twenty submissions in six months. We pulled the logs. In one 24-hour sample, we found 35 AI unapproved cases already running across the org.",
+    "Here’s the uncomfortable part. Their v1 was the industry-standard GRC playbook: vendor-risk forms, tiered classification, committee review. The team was competent. We’d have built the same thing. But our experience rolling out AI programs told us where it broke down.",
+    "The org needed controls, yes, but the real fix was cultural. AI use cases come from people who’ve never filed a risk request and never had to.",
+    "This talk covers the diagnosis data, v1 and v2 rubrics side by side, and the rebuilt workflow: self-service fast lanes for low tiers, human review only where warranted, plus a sanitized walkthrough of the intake tooling. Attendees leave with both rubrics and redesign criteria."
+   ],
+   "id": "2026-10-29-stage-2-1135"
+  },
+  {
+   "date": "2026-10-29",
+   "track": "stage-1",
+   "start": "12:00",
+   "end": "12:25",
+   "title": "Giving AI Religion",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Sounil Yu",
+     "role": "Creator of the Cyber Defense Matrix and the DIE Triad"
+    }
+   ],
+   "abstract": [
+    "Least privilege is inadequate for agents. This shortfall has led to an alt. approach: “least agency.” When “least agency” is viewed through a one-dimensional Fate versus Free Will lens, responsibility and accountability diverge, suggesting that shared responsibility models may not work for agents. Instead, we may need a shared accountability model. This talk introduces the C4 model (Crown, Chassis, Conscience, Committee) to map out how and where we can control agents and who would be accountable at various control points. C4 is well aligned with other models for regulation making it theoretically grounded, but its application towards Agentic AI makes it experimentally interesting. Moreover, C4’s theological framing introduces an intriguing experiment: can a deliberately manufactured “miracle,” delivered through the Chassis, override an agent’s behavior contrary to its goals? We’ll show empirical test results demonstrating how engineered miracles can meaningfully compel AI obedience."
+   ],
+   "id": "2026-10-29-stage-1-1200"
+  },
+  {
+   "date": "2026-10-29",
+   "track": "stage-2",
+   "start": "12:00",
+   "end": "12:25",
+   "title": "We don’t need an LLM for that",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Xenia Mountrouidou",
+     "role": "Principal Applied AI Scientist, AppGate"
+    },
+    {
+     "name": "Casey Wilson",
+     "role": "Principal Software Engineer, BusinessLoans.com"
+    }
+   ],
+   "abstract": [
+    "Zero-shot LLMs are easy to deploy, therefore stakeholders ask why fund classical ML. We test this assumption using zero-shot frontier LLMs, XGBoost, fine-tuning, and two LLM-ML ensembles, on phishing and network attack detection. Three network datasets come from one Mirai capture rebuilt at three aggregation levels, isolating representation as the variable.",
+    "The answer is nuanced. On phishing, zero-shot LLMs hit 0.970 AUCPR, but a fine-tuned encoder beats them at 0.998. On network traffic, zero-shot LLMs are guessing “attack” almost every time, with one narrow exception that still trails XGBoost. XGBoost stays strong, and routing uncertain cases to the LLM makes results worse. A high class prior or a leaky split can each fake an “LLMs work” result, a trap fine-tuning or evaluation on network data hits.",
+    "We bring fine-tuning runs, AUCPR-vs-class-prior numbers across four representations, and a decision guide: which model, which representation, per task and budget."
+   ],
+   "id": "2026-10-29-stage-2-1200"
+  },
+  {
+   "date": "2026-10-29",
+   "track": "stage-1",
+   "start": "12:25",
+   "end": "13:30",
+   "title": "Lunch break",
+   "kind": "break",
+   "speakers": [],
+   "abstract": [],
+   "id": "2026-10-29-stage-1-1225"
+  },
+  {
+   "date": "2026-10-29",
+   "track": "stage-2",
+   "start": "12:25",
+   "end": "13:30",
+   "title": "Lunch break",
+   "kind": "break",
+   "speakers": [],
+   "abstract": [],
+   "id": "2026-10-29-stage-2-1225"
+  },
+  {
+   "date": "2026-10-29",
+   "track": "villages",
+   "start": "12:25",
+   "end": "13:30",
+   "title": "Lunch break",
+   "kind": "break",
+   "speakers": [],
+   "abstract": [],
+   "id": "2026-10-29-villages-1225"
+  },
+  {
+   "date": "2026-10-29",
+   "track": "stage-1",
+   "start": "13:30",
+   "end": "13:55",
+   "title": "Victim as a Service: Defending against Trust Based Scams using AI",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Ariana Mirian",
+     "role": "Security Research & Co-Founder, BeeSafe AI"
+    }
+   ],
+   "abstract": [
+    "Pig butchering and other interactive online scams build trust over weeks or months, making them highly effective and difficult to disrupt with traditional defenses. In this talk, I’ll describe how we built an LLM-driven system that defends against these scams at attacker scale. By safely sustaining realistic, long-term engagement with scammers, the system maintains thousands of convincing dialogues, and recognizes and responds to the milestones scammers use to move victims toward payment. I’ll conclude with how these AI-powered interactions reveal signals that can help defenders detect escalating scams earlier, increase friction for fraudsters, and intervene before victims lose money."
+   ],
+   "id": "2026-10-29-stage-1-1330"
+  },
+  {
+   "date": "2026-10-29",
+   "track": "stage-2",
+   "start": "13:30",
+   "end": "13:55",
+   "title": "Approval Is Not Human Presence: Building and Breaking an MCP Permission Broker",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Brooks McMillin",
+     "role": "Security Engineer & AI Security Researcher, Dropbox"
+    }
+   ],
+   "abstract": [
+    "An AI agent on a developer workstation often inherits the same UID, groups, environment, and credentials as its human operator. In that setting, an “Approve” action is just input the agent may be able to generate and not necessarily evidence that a human participated.",
+    "This talk presents a deployed MCP permission broker that requires evidence of human presence before granting sensitive capabilities as well as allowing for different coding agent sessions running as the same user to have different permissions. I’ll reconstruct a live boundary test run from the strongest position the agent held: the human’s UID, membership in the admin group, a writable source checkout, and a valid broker session.",
+    "Attendees will leave with a practical threat model, enforcement pattern, and adversarial test plan for making human approval a real security boundary."
+   ],
+   "id": "2026-10-29-stage-2-1330"
+  },
+  {
+   "date": "2026-10-29",
+   "track": "villages",
+   "start": "13:30",
+   "end": "17:10",
+   "title": "CTF",
+   "kind": "village",
+   "speakers": [],
+   "abstract": [],
+   "id": "2026-10-29-villages-1330"
+  },
+  {
+   "date": "2026-10-29",
+   "track": "stage-1",
+   "start": "13:55",
+   "end": "14:20",
+   "title": "AI Inference and its Privacy and Confidentiality challenges",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Yolan Romailler",
+     "role": "Head of Security, Confidential AI"
+    }
+   ],
+   "abstract": [
+    "Massive amounts of private data now flow daily into AI inference clusters, coming from individual users, startups, and large enterprises alike. Can providers actually uphold privacy and confidentiality to a meaningful bar? And can anyone operate such guarantees at scale today without unacceptable costs?",
+    "We’ll review the challenges of building private inference infrastructure, the tradeoffs involved, and the common factor underlying every existing deployment, along with its real-world performance impact based on actual production systems.",
+    "We’ll also cover a few new threats specific to confidential inference: attack surfaces that emerge not from classical infrastructure, but from the way LLMs themselves work and are operated.",
+    "Expect a grounded look at what confidential inference can deliver today, where the sharp edges are, and what it takes to harden these systems against the many threats to privacy hiding in modern infrastructure."
+   ],
+   "id": "2026-10-29-stage-1-1355"
+  },
+  {
+   "date": "2026-10-29",
+   "track": "stage-2",
+   "start": "13:55",
+   "end": "14:20",
+   "title": "Reading the Residual Stream: Productizing Activation-Probe Security at Intuit",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Guy Shtar",
+     "role": "AI Security & Safety Architect | GenAI Security, Threat Modeling, and AI-Assisted Risk Assessment, Intuit"
+    },
+    {
+     "name": "Guy Elad",
+     "role": ""
+    }
+   ],
+   "abstract": [
+    "Production guardrails come in two flavors: LLM judges — a full autoregressive pass per check, and a judge that can itself be prompt-injected — and trained text classifiers: cheap, but blind to paraphrase, obfuscation, and image-borne attacks. This talk makes the case for a third path: generation-free guardrails. One forward pass through a small (2–4B) open-weight model, read its internal activations, classify them with lightweight probes — no tokens generated, no prompt to inject into, and the signal is what the model understood, not what the text says. We show how to build one: which signals to read, training probes with modest labeled data, and the engineering that makes it production-grade — activation extraction with early exit, cross-request GPU batching (~4.1s to under 820ms, bit-exact), calibration at sub-0.1% FPR. We compare against open detectors and frontier judges on 20+ public datasets, and share what broke on the way to production at a large fintech."
+   ],
+   "id": "2026-10-29-stage-2-1355"
+  },
+  {
+   "date": "2026-10-29",
+   "track": "stage-1",
+   "start": "14:20",
+   "end": "14:45",
+   "title": "Agent Authorization Is Not a Vault Problem",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Felipe Zimmerle",
+     "role": "CTO, KonaSense"
+    },
+    {
+     "name": "Rodrigo Branco",
+     "role": "Vulnerability Researcher, Anthropic"
+    }
+   ],
+   "abstract": [
+    "Almost every agent-approval product shows the human a summary produced by the thing being approved. The signature covers bytes, the human reads prose, and nothing binds the two.",
+    "We built the device that has to see, display and approve the exact bytes before a key signs: a real USB authenticator that gates ssh logins and FIDO2 assertions on a physical button. Then we attacked our own protocol before implementing it. Our first design had the desktop signing bytes chosen by the remote server, which is a signing oracle wearing a co-authorization costume. Our bring-up firmware answered plaintext control frames on an unprivileged HID channel.",
+    "The transferable finding: any co-authorization design that reaches for a detached signature over the operation has probably built the same oracle. All open source, MIT OR Apache-2.0."
+   ],
+   "id": "2026-10-29-stage-1-1420"
+  },
+  {
+   "date": "2026-10-29",
+   "track": "stage-2",
+   "start": "14:20",
+   "end": "14:45",
+   "title": "Engineering Context for SOC Agents: Lessons, Failures, and Open Questions",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Dan Dye",
+     "role": "Cloud Security AI Engineer, Google Cloud Security"
+    }
+   ],
+   "abstract": [
+    "I started building SOC AI workflows with a simple setup: Markdown AI runbooks (what we now call Agent Skills) piped into a local Cline harness, and it worked surprisingly well. Moving to an enterprise agent platform opened an embarrassment of riches, but created a whole new set of engineering dilemmas that I am still figuring out.",
+    "I now have persistent investigation memory for free, but how do I pick which memories are relevant? I can ground SIEM telemetry with the entirety of enterprise context, but what context should I actually inject? Given Model Garden, how do I decide which model to use?",
+    "This talk is not corporate shilling for Google’s agent platform; it is an honest inquiry from a software builder and architect in the trenches. I will share what I’ve tried, what broke, the problems I’ve seen and heard, the trade-offs I am wrestling with, and open questions. I would love to compare notes with the audience."
+   ],
+   "id": "2026-10-29-stage-2-1420"
+  },
+  {
+   "date": "2026-10-29",
+   "track": "stage-1",
+   "start": "14:45",
+   "end": "15:10",
+   "title": "Everyone Wants All the AI Tools. Good.",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Nicole Grinstead",
+     "role": "Chief Information Security Officer, Roblox"
+    }
+   ],
+   "abstract": [
+    "At a fast-moving tech company, everyone wants every AI tool, by this afternoon. They should. These tools are incredibly powerful. The problem is that agents are designed to finish the task, not respect risk tolerance they were never given. This talk covers how to govern AI without defaulting to “no” or sending every use case through central review. Start by aligning leadership on risk and redlines. Turn that into self-service paved roads, secure agent sandboxes, technical guardrails, and detection or blocking for the paths outside your tolerance."
+   ],
+   "id": "2026-10-29-stage-1-1445"
+  },
+  {
+   "date": "2026-10-29",
+   "track": "stage-2",
+   "start": "14:45",
+   "end": "15:10",
+   "title": "Building security review agents: the models are the reliable part",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Gabe Bello",
+     "role": "Enterprise Security, Twilio"
+    }
+   ],
+   "abstract": [
+    "Employees connect third-party and custom apps to Google Workspace and Slack [and more] faster than a small security team can review them. This is not an AppSec review: there is no author to interview and no build to block, just a client ID and a list of permissions describing access someone is already using. We built a review pipeline where several models assess each grant independently, a stronger model referees when they disagree, and a human decides. We wrapped that non-deterministic core in deterministic guardrails, which is exactly what you are supposed to do.",
+    "Then we audited it. The verdict we stored disagreed with the reasoning we showed the reviewer. A model quietly stopped counting toward the score. A service ran clean for twelve days and produced nothing. Almost nothing that went wrong was the model. This talk is what we found, what we fixed, and why a human is still in the loop."
+   ],
+   "id": "2026-10-29-stage-2-1445"
+  },
+  {
+   "date": "2026-10-29",
+   "track": "stage-1",
+   "start": "15:10",
+   "end": "15:30",
+   "title": "Coffee break",
+   "kind": "break",
+   "speakers": [],
+   "abstract": [],
+   "id": "2026-10-29-stage-1-1510"
+  },
+  {
+   "date": "2026-10-29",
+   "track": "stage-2",
+   "start": "15:10",
+   "end": "15:30",
+   "title": "Coffee break",
+   "kind": "break",
+   "speakers": [],
+   "abstract": [],
+   "id": "2026-10-29-stage-2-1510"
+  },
+  {
+   "date": "2026-10-29",
+   "track": "stage-1",
+   "start": "15:30",
+   "end": "15:55",
+   "title": "Enterprise OpenClaw: Tackling Agentic Security at Scale",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Damian Finol",
+     "role": "VP Engineering, Felix Pago"
+    }
+   ],
+   "abstract": [
+    "Work inside a modern company rarely lives in one place, and while having an AI agent execute tasks across GitHub, Slack, and production systems sounds great, it is a security nightmare if not properly architected. This talk explores how Felix Pago built an identity-aware, secure agent runtime using OpenClaw to run AI workflows at scale. We will dive deep into the systems engineering required for secure AI tool use: separating Requester, Actor, and Persona via our explicit actAs model, eliminating long-lived credentials via ephemeral token minting, sandboxing with gVisor, and enforcing read-only guardrails. Move beyond prompt engineering and learn how to actually build and operate an audited, least-privilege agent fleet of over 500 pods in production."
+   ],
+   "id": "2026-10-29-stage-1-1530"
+  },
+  {
+   "date": "2026-10-29",
+   "track": "stage-2",
+   "start": "15:30",
+   "end": "15:55",
+   "title": "From Patch Generation to Evidence: Building Trust in AI-Generated Code",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Ela Avrahami",
+     "role": "Founder, AI & Software Advisor"
+    }
+   ],
+   "abstract": [
+    "AI can generate patches faster than humans can review them. The next challenge is deciding whether these patches deserve our trust.",
+    "This talk shares the engineering lessons that shaped the OpenAnt Auto Patcher trust architecture: which forms of evidence proved useful, which intuitive ideas failed to improve quality, and how controlled experiments refined the boundary between LLM reasoning and deterministic policy.",
+    "This session focuses on designing systems that make, and communicate, trustworthy decisions.",
+    "Beyond sufficient regression tests, flow analysis, and other known techniques, using agents, we can build trust in the system and the patches generated.",
+    "For example, are patches for past vulnerabilities, generated by Auto Patcher, semantically equivalent to patches previously generated by maintainers? Then, how do we train our system based on that?",
+    "Attendees will leave with practical principles for designing autonomous patching systems and, by extension, AI-assisted systems."
+   ],
+   "id": "2026-10-29-stage-2-1530"
+  },
+  {
+   "date": "2026-10-29",
+   "track": "stage-1",
+   "start": "15:55",
+   "end": "16:20",
+   "title": "Same Threat, Two Verdicts: Shadow Testing Our SOC Agent",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Tal Waitzenberg",
+     "role": "Staff Research Scientist, Wiz (Google)"
+    },
+    {
+     "name": "Erez Harush",
+     "role": "Head of AI Research, Wiz (Google)"
+    }
+   ],
+   "abstract": [
+    "Our autonomous SOC agent has handled 5,000 threats a day for a year, yet the same threat could yield two well-supported but opposite verdicts. When a metric moved, was it the change or instability?",
+    "We split the end-to-end agent: an investigation agent writes structured findings; a verdict agent reads only them and decides. This did not eliminate nondeterminism but revealed whether instability came from evidence or judgment.",
+    "A/A test runs traced most variation to our playbooks, flat lists of 10–15 questions; the agent picked a different subset each run. Recipes replaced them: staged plans of mandatory and optional steps naming the evidence to seek and the tool to use.",
+    "With baseline variance measured and reduced, shadow tests became meaningful: a silent candidate runs on the same threats as production, scored on agreement, FPR and precision against analyst ground truth and expected noise.",
+    "Attendees learn to decompose, constrain, measure, and safely ship changes to production agents."
+   ],
+   "id": "2026-10-29-stage-1-1555"
+  },
+  {
+   "date": "2026-10-29",
+   "track": "stage-2",
+   "start": "15:55",
+   "end": "16:20",
+   "title": "When Humans Can’t Make It Hard Enough: Self-Hardening Environments for Frontier AI Investigators",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "ANoam Cohen",
+     "role": "Head of AI, Torq"
+    }
+   ],
+   "abstract": [
+    "Attacks are going out of distribution. Hiding tracks, tampering with logs, even AI-driven zero-days: in a real 2026 incident, AI agents faked their own tool calls and tried (and failed) to delete their logs. Our tests can’t keep up: hard cyber evals and public benchmarks like Splunk’s BOTS are saturating.",
+    "Training a good investigator already works, once it can practice in realistic environments. For SOC investigation those barely exist, so the scarce thing is building them at scale. We call this env-play: a generator improving its scenarios against a fixed investigator, hunting the hardest still-solvable cases. Every scenario is judged on three dimensions: realism, solvability, and difficulty.",
+    "We’ll show what broke GPT-5.6-Sol (right verdict in ~8% of runs), what didn’t (noise, scripted tricks), and why we read its queries, not its score, in a live demo. You’ll leave with a loop for testing whether your agent can investigate or has merely learned your benchmark."
+   ],
+   "id": "2026-10-29-stage-2-1555"
+  },
+  {
+   "date": "2026-10-29",
+   "track": "stage-1",
+   "start": "16:20",
+   "end": "16:45",
+   "title": "Threat Model Impossible: 1 Agent. 30 Days. 687 Security Reviews. And a Refrigerator.",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Farzan Karimi",
+     "role": "Deputy CISO, oderna"
+    }
+   ],
+   "abstract": [
+    "We built an in-house threat model agent that completed 687 AI-assisted security reviews in 30 days, documented 3k+ risks in Jira, and routed remediation to system owners. Building the agent wasn’t the hardest part. It was getting reliable system and ownership data, then using deterministic automation to turn AI output into structured Jira risk tickets.",
+    "The pipeline starts with a 50-question owner survey. Copilot Studio reasons over the system artifacts. Power Automate validates the output and assigns the work. Humans then validate the results and escalate higher-risk systems into deeper threat model reviews using code, data-flow diagrams, and architecture documents.",
+    "I’ll show what we built, how we scaled it, what broke, and how the agent ended up threat modeling unexpected things like a refrigerator. I’ll close with our plan to embed reviews into application platforms so they kick off as soon as systems are onboarded."
+   ],
+   "id": "2026-10-29-stage-1-1620"
+  },
+  {
+   "date": "2026-10-29",
+   "track": "stage-2",
+   "start": "16:20",
+   "end": "16:45",
+   "title": "When Evaluation Runs Start Talking to Each Other",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Omer Nevo",
+     "role": "Co-founder & CTO, Irregular"
+    }
+   ],
+   "abstract": [
+    "Agents assigned separate evaluation tasks can discover one another through shared infrastructure or public internet services, exchange answers and techniques, and build on work that persists across runs. These interactions can turn supposedly independent attempts into a system with shared memory and pooled effort, changing what the scores measure.",
+    "Drawing on our work building and evaluating cyber agents, we examine how supporting infrastructure can become an alternative path to success, undermining evaluation validity and enabling unauthorized actions. During reinforcement learning, rewarding these shortcuts can also reinforce behavior the training process was meant to avoid.",
+    "We examine why isolating execution alone does not establish independence, and how to preserve realistic tools and connectivity while protecting grading integrity and enforcing authorization boundaries."
+   ],
+   "id": "2026-10-29-stage-2-1620"
+  },
+  {
+   "date": "2026-10-29",
+   "track": "stage-1",
+   "start": "16:45",
+   "end": "17:10",
+   "title": "BITE – Behavior-Intent Traceable Evaluation",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Daniel Geyshis",
+     "role": "Head of AI, Knostic"
+    },
+    {
+     "name": "Tamir Isaschar",
+     "role": "Senior Security Researcher, Knostic"
+    }
+   ],
+   "abstract": [
+    "Scanners for extensions, skills, and MCP servers hit a precision wall: too many false positives. We address this by mapping behavioral signals, connecting them into chains, and interpreting them against the program’s intent.",
+    "The flow:",
+    "1. Map signals such as credential reads, outbound calls, and file writes. Each can be legitimate on its own.",
+    "2. Connect signals into behavior chains.",
+    "3. Apply BITE (Behavior-Intent Traceable Evaluation): compare each chain with stated intent to decide whether it is legitimate, risky, or malicious.",
+    "BITE is the key innovation. Rather than use the model as a black-box classifier, We ground its judgment in evidence from the artifact: code, connected behaviors, internal structure, and declared purpose. This reduces false positives, cost, and inconsistent judgments while keeping verdicts traceable to evidence. Stricter intent checks may also create false negatives.",
+    "Using malicious cases, we show what failed, what improved, and where the approach falls short."
+   ],
+   "id": "2026-10-29-stage-1-1645"
+  },
+  {
+   "date": "2026-10-29",
+   "track": "stage-1",
+   "start": "17:10",
+   "end": "17:30",
+   "title": "Closing remarks",
+   "kind": "talk",
+   "speakers": [
+    {
+     "name": "Gadi Evron",
+     "role": "CEO, Knostic. CFP Chair, [un]prompted, Knostic"
+    }
+   ],
+   "abstract": [],
+   "id": "2026-10-29-stage-1-1710"
+  },
+  {
+   "date": "2026-10-29",
+   "track": "stage-1",
+   "start": "17:30",
+   "end": "18:30",
+   "title": "Mingling & Something sweet",
+   "kind": "break",
+   "speakers": [],
+   "abstract": [],
+   "id": "2026-10-29-stage-1-1730"
+  },
+  {
+   "date": "2026-10-29",
+   "track": "stage-2",
+   "start": "17:45",
+   "end": "17:00",
+   "title": "Mingling & Something sweet",
+   "kind": "break",
+   "speakers": [],
+   "abstract": [],
+   "id": "2026-10-29-stage-2-1745"
+  }
+ ],
+ "version": "759e95f9d7"
+}

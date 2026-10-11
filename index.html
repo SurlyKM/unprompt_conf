@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0c0e11" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#f6f7f9" media="(prefers-color-scheme: light)">
+<title>[un]prompted II</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preload" href="fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<header class="hdr" id="hdr"><div class="hdr-in">
+  <div class="logo">[un]<span>prompted II</span></div>
+  <label class="srch">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <input type="search" id="q" placeholder="Search the agenda" aria-label="Search the agenda"
+           enterkeyhint="search" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
+  </label>
+</div></header>
+
+<div class="cdown" id="cdown" aria-live="polite"></div>
+<div class="ctrl" id="ctrl"></div>
+<main class="main" id="main"><div class="no-r">Loading the agenda…</div></main>
+<button class="fab" id="fab" type="button" hidden></button>
+<footer class="ftr" id="ftr"></footer>
+
+<script src="app.js"></script>
+</body>
+</html>
