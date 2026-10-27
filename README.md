@@ -15,7 +15,7 @@ If you deploy to the same address as version 1, your existing stars, notes and r
 - **Now**: big San Francisco clock, what is on now with progress bars, what is up next, and a banner if your starred talks clash.
 - **Schedule**: one day at a time (swipe left or right to change day). Villages tuck into a strip at the top. Stage chips and the Everyone / Mine switch filter the list.
 - **My plan**: everything you starred across all days, with clashes outlined, plus talks you flagged "want to talk to".
-- **Details sheet**: tap any talk for the abstract and speakers, your notes, a 1 to 5 rating and a one-line takeaway. The browser back button closes the sheet.
+- **Details sheet**: tap any talk for the abstract and speakers (role as published, their other sessions, a web search link), your notes, a 1 to 5 rating and a one-line takeaway. The browser back button closes the sheet.
 - **Search**: titles, speakers, abstracts and your own notes, across all days.
 
 ## Update the schedule
@@ -41,7 +41,7 @@ Stars and notes are keyed by day + stage + start time, so they survive renamed t
 - All times are San Francisco time. Preview a moment by adding `?now=2026-10-27T10:05` to the URL.
 - Clash detection looks at starred sessions only. Breaks and villages (CTF, Harness, Defense) never count as clashes.
 - Everything you save stays in the browser's localStorage on that device. Clearing site data in Chrome clears it.
-- Known source quirks, shown as published: Thu 29 Stage 2 "Mingling" has an end time before its start (shown with start only), Wed 28 Stage 1 "Closing remarks" overlaps "Mingling", and Wed 28 Stage 2 has a talk starting 13:35 that overlaps the one before it.
+- Known source quirks, shown as published: Thu 29 Stage 2 "Mingling" has an end time before its start (shown with start only).
 - Dark theme only, like the BSides app.
 
 ## Files

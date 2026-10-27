@@ -160,6 +160,15 @@ dialog.sheet::backdrop{background:rgba(6,8,18,.65)}
 .person{margin:0 0 10px}
 .person strong{display:block}
 .person span{color:var(--muted);font-size:14px}
+.person{padding:12px 14px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-md)}
+.person strong+span{display:block}
+.also{margin-top:10px;display:grid;gap:6px}
+.also em{font-style:normal;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.also button{all:unset;box-sizing:border-box;display:block;width:100%;padding:8px 10px;border-radius:10px;background:var(--surface2);font-size:14px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.also button:active{filter:brightness(1.2)}
+.also button b{color:var(--live);font-weight:700}
+.also button span{display:block;color:var(--text);margin-top:2px}
+.look{display:inline-block;margin-top:10px;font-size:14px;color:var(--live)}
 .venue{margin:12px 0 0}
 .venue p{margin:0}
 .mynotes{background:var(--bg);border-radius:12px;padding:12px 12px 6px;margin:14px 0 0}
@@ -181,3 +190,7 @@ dialog.sheet::backdrop{background:rgba(6,8,18,.65)}
 
 .toast{position:fixed;left:50%;bottom:calc(76px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--text);color:var(--bg);padding:10px 16px;border-radius:12px;font-weight:700;font-size:14px;z-index:50;max-width:calc(100% - 32px);text-align:center;opacity:0;pointer-events:none;transition:opacity .2s}
 .toast.show{opacity:1}
+
+.sheet .who{margin:4px 0 12px;color:var(--muted);font-size:15px;line-height:1.35}
+.sheet .who p{margin:0 0 4px}
+.sheet .who strong{color:var(--text)}

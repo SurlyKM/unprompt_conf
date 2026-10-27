@@ -5,7 +5,7 @@
  * That means a schedule update shows up on the visit after the one that downloaded it.
  * Change CACHE below if you ever need to throw away everything stored on phones.
  */
-const CACHE = 'upsf26-v2';
+const CACHE = 'upsf26-v5';
 const CORE = [
   './', 'index.html', 'app.css', 'app.js', 'favicon.svg', 'data/agenda.json',
   'fonts/bricolage-grotesque-latin-wght-normal.woff2',

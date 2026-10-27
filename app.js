@@ -449,12 +449,25 @@ function scrollToNow() {
 const paras = (list) => list.map((p) => `<p>${esc(p)}</p>`).join('');
 let sheetPushed = false, dirty = false;
 
-function openDetail(key) {
+// One speaker in the details sheet: name, role as published, their other sessions, and a web search link.
+// The agenda page publishes only name and role, so there are no bios or profile links to show.
+function personCard(p, from) {
+  const also = sessions
+    .filter((x) => x.key !== from.key && x.kind !== 'break' && x.names.includes(p.name))
+    .sort((a, b) => a.start - b.start);
+  const list = also.length
+    ? `<div class="also"><em>Also speaking</em>${also.map((x) => `<button type="button" data-open="${esc(x.key)}">${esc(shortDay(x.start))}, ${esc(timeRange(x))} <b>${esc(x.room)}</b><span>${esc(short(x.title, 60))}</span></button>`).join('')}</div>`
+    : '';
+  const url = 'https://www.google.com/search?q=' + encodeURIComponent(`${p.name} ${p.role}`.trim());
+  return `<div class="person"><strong>${esc(p.name)}</strong>${list}<a class="look" href="${esc(url)}" target="_blank" rel="noopener">Look up ${esc(p.name.split(' ')[0])} on the web</a></div>`;
+}
+
+function openDetail(key, toTop) {
   const s = byKey.get(key); if (!s) return;
   const c = context(), on = c.ms.has(key), w = !!wtt[key], r = ratings[key] || 0;
   const others = c.cl.map.get(key);
   const alert = others ? `<div class="alert">Clashes with ${others.map((o) => `${esc(o.title)} (${esc(o.room)}, ${esc(timeRange(o))})`).join('; ')}</div>` : '';
-  const people = s.speakers.map((p) => `<div class="person"><strong>${esc(p.name)}</strong>${p.role ? `<span>${esc(p.role)}</span>` : ''}</div>`).join('');
+  const people = s.speakers.map((p) => personCard(p, s)).join('');
   const venue = s.kind === 'event' ? `<div class="venue"><p><strong>${esc(s.venue)}</strong></p><p class="muted">${esc(s.address)}</p>${s.maps ? `<p><a href="${esc(s.maps)}" target="_blank" rel="noopener">Open in Maps</a></p>` : ''}</div>` : '';
   const body = s.abstract.length ? paras(s.abstract) : (s.kind === 'event' || s.kind === 'village' ? '' : '<p class="muted">No description published yet.</p>');
   const stars = [1, 2, 3, 4, 5].map((n) => `<button type="button" class="${n <= r ? 'lit' : ''}" data-rate="${n}" aria-label="Rate ${n} of 5">${STAR}</button>`).join('');
@@ -462,7 +475,7 @@ function openDetail(key) {
   inner.innerHTML = `<button class="x" type="button" data-close aria-label="Close">×</button>
     <div class="meta"><span>${esc(shortDay(s.start))}, ${esc(timeRange(s))}</span><span class="room">${esc(s.room)}</span></div>
     <h2>${esc(s.title)}</h2>
-    ${s.names.length ? `<p class="who muted">${esc(s.names.join(', '))}</p>` : ''}
+    ${s.speakers.length ? `<div class="who">${s.speakers.map((p) => `<p><strong>${esc(p.name)}</strong>${p.role ? esc(', ' + p.role) : ''}</p>`).join('')}</div>` : ''}
     <div class="actions">
       <button class="btn ${on ? 'ghost' : 'warm'}" type="button" data-star="${esc(key)}" aria-pressed="${on}">${on ? STAR : STAR_O}${on ? 'Starred' : 'Star this'}</button>
       <button class="btn ghost" type="button" data-wtt="${esc(key)}" aria-pressed="${w}" style="${w ? 'border-color:var(--live);color:var(--live)' : ''}">${CHAT}${w ? 'Want to talk to' : 'Want to talk to?'}</button>
@@ -484,7 +497,7 @@ function openDetail(key) {
     // Chrome's back button should close the sheet, not leave the app.
     history.pushState({ sheet: 1 }, ''); sheetPushed = true;
     inner.scrollTop = 0;
-  } else inner.scrollTop = y;
+  } else inner.scrollTop = toTop ? 0 : y;
 }
 
 function toggleStar(key) {
@@ -543,7 +556,7 @@ document.addEventListener('click', (e) => {
   }
   if (el.dataset.star) return toggleStar(el.dataset.star);
   if (el.dataset.wtt) return toggleWtt(el.dataset.wtt);
-  if (el.dataset.open) return openDetail(el.dataset.open);
+  if (el.dataset.open) return openDetail(el.dataset.open, !!el.closest('dialog'));
   if (el.dataset.rate) {
     const key = el.closest('.mynotes').dataset.k, n = +el.dataset.rate;
     if (ratings[key] === n) delete ratings[key]; else ratings[key] = n;     // tap the same star again to clear
